@@ -28,6 +28,5 @@
     "razorpay": "^2.9.3",
     "stripe": "^14.22.0"
   },
-  "devDependencies": {},
   "description": ""
 }
