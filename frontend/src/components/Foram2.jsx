@@ -29,7 +29,7 @@ const Foram2 = () => {
   const [amounts, setAmounts] = useState([]);
   const mem = ["Base", "Silver", "Gold", "Diamond"];
   const passes = ["1", "2", "3", "4"];
-  const interval = ["7 Days", "15 Days", "1 Month", "1 Month"];
+  const interval = ["4 Years", "4 Years", "4 Years", "4 Years"];
   const name = localStorage.getItem("userName");
   const phoneNumber = localStorage.getItem("userPhone");
   const imageUrl=localStorage.getItem('imgurl');
@@ -57,16 +57,16 @@ const Foram2 = () => {
     if (emailDomain === "students.iitmandi.ac.in") {
       if (email.charAt(0).toLowerCase() === "b") {
         qrImages = [Qr1, Qr2, Qr3, Qr4];
-        amounts = [160, 300, 420, 520];
+        amounts = [100, 200, 300, 400];
         degree = "B-Tech";
       } else {
         qrImages = [Qr5, Qr6, Qr7, Qr8];
-        amounts = [180, 340, 480, 600];
+        amounts = [110, 220, 330, 440];
         degree = "PHD/M-Tech";
       }
-    } else if (emailDomain === "iitmandi.ac.in") {
+    } else if ((emailDomain === "iitmandi.ac.in")|| (emailDomain === "projects.iitmandi.ac.in")) {
       qrImages = [Qr9, Qr10, Qr11, Qr12];
-      amounts = [200, 380, 540, 680];
+      amounts = [120, 240, 360, 480];
       degree = "Faculty/Staff";
     } else {
       qrImages = [Qr9, Qr10, Qr11, Qr12];
@@ -557,8 +557,8 @@ const Foram2 = () => {
                       </svg>
                       <span className="flex items-end">
                         <p>Validity: </p>
-                        <p className="text-lg ml-2 font-semibold">30 </p>
-                        <p>Days</p>
+                        <p className="text-lg ml-2 font-semibold">4 </p>
+                        <p>Years</p>
                       </span>
                     </li>
                   </ul>

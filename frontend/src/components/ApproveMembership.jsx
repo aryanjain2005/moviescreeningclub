@@ -40,13 +40,12 @@ export default function ApproveMembership() {
 
   const generateAndSendEmail = (membership, paymentId, totalTickets, email) => {
     let qrCodes = [];
-
     for (let i = 1; i <= totalTickets; i++) {
       QRCode.toDataURL(paymentId + i)
         .then((qrCodeData) => {
           qrCodes.push(qrCodeData);
           if (qrCodes.length === totalTickets) {
-            sendEmail(membership, paymentId, qrCodes, email);
+            sendEmail(membership,paymentId,qrCodes,email);
           }
         })
         .catch((error) => {
@@ -84,7 +83,6 @@ export default function ApproveMembership() {
 
   const saveuserData = (email, memtype, validity) => {
     const userData = { email, memtype, validity };
-    console.log("a");
     axios
       .post(`${SERVERIP}/memrouter/saveusermem`, userData)
       .then((response) => {
@@ -116,7 +114,7 @@ export default function ApproveMembership() {
     let ticketsGenerated = 0;
 
     const saveTicket = (ticketNumber) => {
-      const paymentId = basePaymentId + ticketNumber; // Append ticket number to basePaymentId
+      const paymentId = basePaymentId + ticketNumber;
       const QRData = { name, email, paymentId, validity, memtype };
       axios
         .post(`${SERVERIP}/QR/saveQR`, QRData)
@@ -179,23 +177,23 @@ export default function ApproveMembership() {
           await axios.put(`${SERVERIP}/payment/confirmMembership/${id}`);
           Swal.fire("Confirmed!", "Membership has been confirmed.", "success");
           // Now, call the subsequent functions after membership confirmation
-          fetchMembershipData();
+          await fetchMembershipData();
           if (membership === "Base") {
-            saveuserData(email, "base", 7);
-            saveData(payment_id, 1, "base", 7, name, email);
-            generateAndSendEmail("base", payment_id, 1, email);
+            await saveuserData(email, "base", 9999);
+            await saveData(payment_id, 1, "base", 9999, name, email);
+            await generateAndSendEmail("base", payment_id, 1, email);
           } else if (membership === "Silver") {
-            saveuserData(email, "silver", 15);
-            saveData(payment_id, 2, "silver", 15, name, email);
-            generateAndSendEmail("silver", payment_id, 2, email);
+            await saveuserData(email, "silver", 9999);
+            await saveData(payment_id, 2, "silver", 9999, name, email);
+            await generateAndSendEmail("silver", payment_id, 2, email);
           } else if (membership === "Gold") {
-            saveuserData(email, "gold", 30);
-            saveData(payment_id, 3, "gold", 30, name, email);
-            generateAndSendEmail("gold", payment_id, 3, email);
+            await saveuserData(email, "gold", 9999);
+            await saveData(payment_id, 3, "gold", 9999, name, email);
+            await generateAndSendEmail("gold", payment_id, 3, email);
           } else if (membership === "Diamond") {
-            saveuserData(email, "diamond", 30);
-            saveData(payment_id, 4, "diamond", 30, name, email);
-            generateAndSendEmail("diamond", payment_id, 4, email);
+            await saveuserData(email, "diamond", 9999);
+            await saveData(payment_id, 4, "diamond", 9999, name, email);
+            await generateAndSendEmail("diamond", payment_id, 4, email);
           }
         }
       });

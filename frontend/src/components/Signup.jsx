@@ -38,6 +38,7 @@ export const Signup = () => {
 
   const parseEmail = (email) => {
     email = email.trim();
+    console.log(email);
     if (email.endsWith("@students.iitmandi.ac.in")) {
       setIsValidEmail(true);
       if (email.toLowerCase().startsWith("b")) {
@@ -45,12 +46,12 @@ export const Signup = () => {
       } else {
         setFormData({ ...formData, designation: "PHD/M-Tech" });
       }
-    } else if (email.endsWith("@iitmandi.ac.in")) {
+    } else if ((email.endsWith("@iitmandi.ac.in"))|| (email.endsWith("@projects.iitmandi.ac.in"))) {
       setIsValidEmail(true);
       setFormData({ ...formData, designation: "Faculty/Staff" });
     } else {
       setIsValidEmail(false);
-      setFormData({ ...formData, designation: "" });
+      setFormData({ ...formData, designation: "Faculty/Staff" });
     }
   };
 

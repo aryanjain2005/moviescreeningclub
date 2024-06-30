@@ -191,7 +191,7 @@ export const Scanner = () => {
                         <img id="logoImage" src="https://github.com/aryanjain2005/repo1/blob/main/logo2-DANloDCY-Photoroom.png?raw=true" alt="Film Screening Logo" class="logo">
                         <h2 class="title">IIT Mandi</h2> 
                         <p class="line-between"></p>
-                        <p class="subtitle">Laapata Ladies</p>
+                        <p class="subtitle">Srikanth</p>
                         <p class="subtitle">${formatDate(data.showdate)}</p>
                         <p class="subtitle">${convertTo12HourFormat(data.showtime)}</p>
                     </div>

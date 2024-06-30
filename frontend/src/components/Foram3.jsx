@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-//import Razorpay  from 'razorpay';
 import QRCode from "qrcode";
 import axios from "axios";
 import { useMembershipContext } from "./MembershipContext";
@@ -9,13 +8,12 @@ import { SERVERIP } from "../config";
 import Swal from "sweetalert2";
 import Image from "../images/camera.svg";
 
-export const Foram = () => {
+export const Foram3 = () => {
   const [amount, setAmount] = useState("");
   const { hasMembership, updateMembershipStatus } = useMembershipContext();
   const [membership, setMembership] = useState("");
   const [degree, setDegree] = useState("");
   const [email, setEmail] = useState("");
-  const [openRazorpay, setOpenRazorpay] = useState(false);
   const name = localStorage.getItem("userName");
 
   const token = getToken();
@@ -47,25 +45,17 @@ export const Foram = () => {
   };
 
   useEffect(() => {
-    if (membership !== "" && amount !== "" && openRazorpay) {
-      const options = {
-        key: "rzp_test_raxyaoALaCjvBM",
-        amount: amount * 100,
-        currency: "INR",
-        name: "Chalchitra",
-        description: "for testing purpose",
-        prefill: {
-          name: "Aryan",
-        },
-        notes: {
-          address: "Razorpay Corporate office",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-        handler: function (response) {
-          updateMembershipStatus(true);
-
+    if (membership !== "" && amount !== "") {
+        function openPay() {
+            const options = {
+                "atomTokenId": "<%= token %>",
+                "merchId": "456672",
+                "custEmail": "aryanjain999999999@gmail.com",
+                "custMobile": "9799000999",
+                "returnUrl": "http://localhost:3000/Response"  // replace with your return URL
+            }
+            let atom = new AtomPaynetz(options, 'uat');
+        }
           // Process membership based on the selected membership type
           if (membership === "base") {
             saveuserData(email, "base", 7);
@@ -84,19 +74,13 @@ export const Foram = () => {
             saveData(response.razorpay_payment_id, 4, "diamond", 30);
             generateAndSendEmail("diamond", response.razorpay_payment_id, 4);
           }
-        },
       };
-      const pay = new window.Razorpay(options);
-      pay.open();
-      setOpenRazorpay(false);
-    }
-  }, [membership, amount, openRazorpay]);
+    }, [membership, amount]);
 
   const handleSubmit = (e, selectedMembership) => {
     e.preventDefault();
     setMembership("");
     setAmount("");
-    setOpenRazorpay(false);
   
     const amounts = {
       // "B-Tech": { base: 1, silver: 300, gold: 420, diamond: 520 },
@@ -108,7 +92,6 @@ export const Foram = () => {
     };
     setMembership(selectedMembership);
     setAmount(amounts[degree][selectedMembership]);
-    setOpenRazorpay(true);
   };
   
 
@@ -750,4 +733,4 @@ export const Foram = () => {
   }
 };
 
-export default Foram;
+export default Foram3;
