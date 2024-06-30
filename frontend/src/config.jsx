@@ -1,2 +1,4 @@
-export const SERVERIP = "http://localhost:8000";
-// export const SERVERIP = "/api";
+export const SERVERIP =
+	import.meta.env.VITE_environment === 'development'
+		? 'https://chalchitra.iitmandi.ac.in/api'
+		: '/api'

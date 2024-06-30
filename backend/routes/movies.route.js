@@ -1,23 +1,31 @@
 const express = require('express')
 const {
-	addMovie,
-	getMovie,
-	updatemovie,
-	deletemovie,
-	movieshowtimes,
-	movietrailer,
-	addmovieshowtimes,
-	deletemovieshowtimes
+  addMovie,
+  getMovies,
+  updateMovie,
+  deleteMovie,
+  getMovieById,
+  addMovieShowtimes,
+  deleteMovieShowtimes
 } = require('@/controllers/movies.controller')
+const verifyJWTWithRole = require('@/middleware')
+
 const router = express.Router()
 
-router.post('/add-movies', addMovie)
-router.get('/movies', getMovie)
-router.put('/movies/:id', updatemovie)
-router.delete('/movies/:id', deletemovie)
-router.get('/:movieId/showtimes', movieshowtimes)
-router.get('/:movieId/trailer', movietrailer)
-router.post('/:movieId/showtimes', addmovieshowtimes)
-router.delete('/:movieId/showtimes/:showtimeId', deletemovieshowtimes)
+router.get('/', getMovies)
+router.get('/:movieId', getMovieById)
+router.post('/add', verifyJWTWithRole('movievolunteer'), addMovie)
+router.put('/:id', verifyJWTWithRole('movievolunteer'), updateMovie)
+router.delete('/:id', verifyJWTWithRole('movievolunteer'), deleteMovie)
+router.post(
+  '/:movieId/showtimes',
+  verifyJWTWithRole('movievolunteer'),
+  addMovieShowtimes
+)
+router.delete(
+  '/:movieId/:showtimeId',
+  verifyJWTWithRole('movievolunteer'),
+  deleteMovieShowtimes
+)
 
 module.exports = router

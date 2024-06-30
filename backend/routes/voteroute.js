@@ -1,18 +1,21 @@
 const express = require('express')
 const router = express.Router()
 const {
-	getAllMovies,
-	voteMovie,
-	addvotemovie,
-	deletevotemovie
+  getAllMovies,
+  voteMovie,
+  addVoteMovie,
+  deleteVoteMovie
 } = require('@/controllers/vote.controller')
+const verifyJWTWithRole = require('@/middleware')
 
-// Route to get all movies
 router.get('/movies', getAllMovies)
 
-// Route to vote for a movie
-router.post('/vote', voteMovie)
-router.post('/addvotemovie', addvotemovie)
-router.delete('/deletevotemovie/:id', deletevotemovie)
+router.post('/', verifyJWTWithRole(), voteMovie)
+router.post('/add', verifyJWTWithRole('movievolunteer'), addVoteMovie)
+router.delete(
+  '/delete/:id',
+  verifyJWTWithRole('movievolunteer'),
+  deleteVoteMovie
+)
 
 module.exports = router

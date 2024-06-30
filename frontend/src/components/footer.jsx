@@ -3,15 +3,15 @@ import {
   Dialog,
   DialogHeader,
   DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
-import { useState } from "react";
+  DialogFooter
+} from '@material-tailwind/react'
+import { useState } from 'react'
 
 export default function Footer() {
-  const copyright = String.fromCodePoint(0x00a9);
-  const [open, setOpen] = useState(false);
+  const copyright = String.fromCodePoint(0x00a9)
+  const [open, setOpen] = useState(false)
 
-  const handleOpen = () => setOpen(!open);
+  const handleOpen = () => setOpen(!open)
 
   return (
     <div className="flex justify-center bg-[#414359] text-white font-monts">
@@ -172,17 +172,25 @@ export default function Footer() {
           <p>{copyright} 2024 Chalchitra IIT Mandi</p>
         </div>
       </div>
-      <Dialog open={open} handler={handleOpen} className="h-[70%] overflow-y-scroll">
+      <Dialog
+        open={open}
+        handler={handleOpen}
+        className="h-[70%] overflow-y-scroll"
+      >
         <DialogHeader>Our Privacy Policy</DialogHeader>
         <DialogBody className="">
           <p className="text-lg font-bold mb-3">Rules and Regulation</p>
           <div>
-            <span className="font-semibold mr-2">1. Resspanectful Behavior:</span>
+            <span className="font-semibold mr-2">
+              1. Resspanectful Behavior:
+            </span>
             All attendees must behave respectfully towards others, including
             fellow audience members, organizers, and staff.
           </div>
           <div>
-            <span className="font-semibold mr-2">2. No Outside Food or Drink:</span>
+            <span className="font-semibold mr-2">
+              2. No Outside Food or Drink:
+            </span>
             For cleanliness and safety reasons, attendees should not bring
             outside food or drink into the auditorium. Food items purchased in
             lobby are also not allowed inside auditorium.
@@ -200,7 +208,9 @@ export default function Footer() {
             ensure everyone can enjoy the film without distractions.
           </div>
           <div>
-            <span className="font-semibold mr-2">5. Silence Mobile Devices:</span>
+            <span className="font-semibold mr-2">
+              5. Silence Mobile Devices:
+            </span>
             Attendees are asked to silence their mobile phones or set them to
             vibrate mode to avoid disruptions.
           </div>
@@ -261,9 +271,8 @@ export default function Footer() {
           >
             <span>Close</span>
           </Button>
-          
         </DialogFooter>
       </Dialog>
     </div>
-  );
+  )
 }
