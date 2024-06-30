@@ -22,9 +22,10 @@ import QR from "./components/displayQR";
 import Footer from "./components/footer";
 import MovieList from "./components/VotePage";
 // import { SERVERIP } from "./config";
-import Foram from "./components/Foram";
+// import Foram from "./components/Foram";
 import Guidelines from "./components/guidelines";
 import ApproveMembership from "./components/ApproveMembership";
+import DesignationCounts from "./components/MemberShipsSold";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route path="/VotePage" element={<MovieList />} />
           <Route path="/guidelines" element={<Guidelines />} />
           <Route path="/approveMembership" element={<ApproveMembership />} />
+          <Route path="/designationCount" element={<DesignationCounts />} />
         </Routes>
         <Footer/>
       </LoginProvider>

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
@@ -34,8 +34,8 @@ export default function ForgotPassword() {
           
           localStorage.setItem("forgotpassEmail", formData.email); // Store email in local storage
           navigate("/update");
-        } else {
-        }
+        } 
+        // else{}
       }
     } catch (err) {
       if (err.response.status === 401) {

@@ -21,6 +21,11 @@ export default function ApproveMembership() {
   const token = getToken();
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  
+
   useEffect(() => {
     const userType = localStorage.getItem("userType");
     if (
@@ -83,10 +88,10 @@ export default function ApproveMembership() {
 
   const saveuserData = (email, memtype, validity) => {
     const userData = { email, memtype, validity };
-    axios
-      .post(`${SERVERIP}/memrouter/saveusermem`, userData)
+    axios.post(`${SERVERIP}/memrouter/saveusermem`, userData)
       .then((response) => {
         console.log(`Usermem data saved successfully for ${(memtype, email)}`);
+        axios.post('http://localhost:27017/designation/update-designation-counts');
         // Swal.fire({
         //   title: "Error",
         //   text: `Usermem data saved successfully for ${(memtype, email)}`,
@@ -101,6 +106,8 @@ export default function ApproveMembership() {
           icon: "error",
         });
       });
+
+      
   };
 
   const saveData = (

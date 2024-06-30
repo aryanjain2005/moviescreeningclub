@@ -14,6 +14,7 @@ mongoose.connect(`${process.env.MongoDB}`,)
   .catch((error) => console.error("MongoDB connection error:", error));
 
 const PORT = 8000;
+// const PORT = 27017;
 app.use(bodyParser.json());
 
 const loginRouter = require('./routes/login.route.js');
@@ -36,6 +37,9 @@ const membershipsRouter = require('./routes/membershipsRoutes.js');
 app.use('/memrouter', membershipsRouter);
 const votepagerouter = require('./routes/voteroute.js');
 app.use('/voterouter', votepagerouter);
+const designationCountRoute = require('./routes/designationCount.route.js')
+app.use('/designation',designationCountRoute);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

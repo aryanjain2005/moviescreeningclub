@@ -217,6 +217,9 @@ const Navbar = () => {
                       <NavItem to="/guidelines" toggleMenu={toggleMenu}>
                         Booking Guidelines/Help
                       </NavItem>
+                      <NavItem to="/designationCount" toggleMenu={toggleMenu}>
+                        Memberships Sold
+                      </NavItem>
                     </>
                   )}
                   {userType === "ticketvolunteer" && (

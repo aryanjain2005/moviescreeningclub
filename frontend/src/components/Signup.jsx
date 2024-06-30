@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import imageOne from "../images/signupImg.svg";
@@ -30,7 +30,10 @@ export const Signup = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ 
+      ...formData, 
+      [name]: value 
+    });
     if (name === "email") {
       parseEmail(value);
     }

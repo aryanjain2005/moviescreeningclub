@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* DesignationCounts.css */
+.designation-counts {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  .designation-counts h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  .designation-counts label {
+    margin-right: 20px;
+  }
+  .designation-counts select {
+    margin-left: 10px;
+  }
+  .designation-counts table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .designation-counts th, .designation-counts td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  .designation-counts th {
+    background-color: #f2f2f2;
+  }
+  .designation-counts tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  
