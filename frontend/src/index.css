@@ -34,5 +34,57 @@
   .designation-counts tr:nth-child(even) {
     background-color: #f9f9f9;
   }
+
+/* popcorn CSS */
+.popcorn {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+}
+
+.popcorn-1 {
+  top: 800px;
+  left: 1210px;
+  background-image: url('./images/popcorn1.png');
+  background-size: cover;
+}
+
+.popcorn-2 {
+  top: 500px;
+  right: 100px;
+  background-image: url('./images/popcorn2.png');
+  background-size: cover;
+}
+
+.popcorn-3 {
+  bottom: 90px;
+  left: 100px;
+  background-image: url('./images/popcorn1.png');
+  background-size: cover;
+}
+.popcorn-4 {
+  top: 1100px;
+  left: 95px;
+  background-image: url('./images/popcorn3.png');
+  background-size: cover;
+}
+.popcorn-5 {
+  top: 850px;
+  left: 95px;
+  background-image: url('./images/popcorn4.png');
+  background-size: cover;
+}
+.popcorn-6 {
+  top: 1050px;
+  right: 95px;
+  background-image: url('./images/popcorn2.png');
+  background-size: cover;
+}
+.popcorn-7 {
+  top: 750px;
+  right: 700px;
+  background-image: url('./images/popcorn2.png');
+  background-size: cover;
+}
   
   

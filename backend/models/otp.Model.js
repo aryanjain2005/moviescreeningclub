@@ -17,7 +17,7 @@ const otpSchema = new mongoose.Schema({
 });
 
 otpSchema.pre("save", async function (next) {
-  console.log("New document saved to the database");
+  // console.log("New document saved to the database");
   next();
 });
 

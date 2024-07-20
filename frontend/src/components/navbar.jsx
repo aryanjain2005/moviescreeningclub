@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../images/logo2.jpg";
+// import Logo from "../images/logo2.jpg";
+import Logo from "../images/fsc_logo.jpg";
 import { useLogin } from "./LoginContext";
 import axios from "axios";
 import { useMembershipContext } from "./MembershipContext";
@@ -77,19 +78,20 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-[#414359] w-full md:sticky top-0 z-20">
+      <nav className="bg-[#414359] w-full md:sticky top-0 z-20" style={{background:"#141414"}}>
         <div className="w-full mx-auto">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Link to="/">
-                  <img className="h-14 w-auto ml-2" src={Logo} alt="Movies" />
+                  <img className="h-12 w-auto ml-5" src={Logo} alt="Movies" />
                 </Link>
+                <h3 style={{color:"red",fontSize:"30px",fontWeight:"bold",marginLeft:"8px",fontFamily:'Bebas Neue'}}>CHALCHITRA</h3>
               </div>
             </div>
             <div className="flex items-center gap-2">
               {loggedIn ? (
-                <div className="rounded-md bg-[#EADBC8] text-black h-9 px-2 py-1 mt-1 mr-2 font-normal">
+                <div className="rounded-md bg-[#EADBC8] text-black h-9 px-4 py-1 mt-2 mr-2 font-normal"  style={{color:"white", backgroundColor:"red",fontFamily:'Bebas Neue',fontSize:'1.3rem'}}>
                   Welcome {getDisplayName(localStorage.getItem("userName"))}
                 </div>
               ) : (
@@ -345,7 +347,7 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      <div className="bg-[#6c738f] py-1 text-lg max-sm:text-sm flex justify-center items-center capitalize text-white md:sticky top-[4rem] z-10">
+      {/* <div className="bg-[#6c738f] py-1 text-lg max-sm:text-sm flex justify-center items-center capitalize text-white md:sticky top-[4rem] z-10" style={{color:"red",backgroundColor:"black"}}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -375,11 +377,12 @@ const Navbar = () => {
             d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
           />
         </svg>
-      </div>
+      </div> */}
     </>
   );
 };
 
+// eslint-disable-next-line react/prop-types
 const NavItem = ({ to, children, toggleMenu, disabled }) => {
   const handleClick = () => {
     if (!disabled) {

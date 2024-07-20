@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { getToken } from "../utils/getToken";
 import { Link, useNavigate } from "react-router-dom";
 import { SERVERIP } from "../config";
+import bg from '../images/bg.png'
 
 const Home = () => {
   const token = getToken();
@@ -51,12 +52,43 @@ const Home = () => {
 
   return (
     <div>
-      <div className="bg-gray-200 flex flex-col items-center font-monts">
-        <div className="flex flex-col items-between justify-center bg-white h-1/2 w-4/5 max-sm:w-[95%] my-10 rounded-xl shadow-lg">
-          <div className="flex justify-between my-3 mx-5 max-sm:mx-2">
-            <div>
-              <h2 className="text-xl font-semibold">Ongoing Movies</h2>
-            </div>
+      <div className="bg-gray-200 flex flex-col items-center font-monts" style={{backgroundColor:"#0C0C0C"}}>
+      <div className="flex justify-center ">
+          <img src={bg} alt="not found" style={{marginTop:"-160px"}}/>
+
+          <div className="text-block" 
+          style={{position:"absolute",
+                  bottom:"450px",
+                  color:"white",
+                  marginBottom:"-130px",
+                  marginLeft:"-680px",
+                  fontSize:"2.5rem",
+                  fontStyle:"italic"
+          }}>
+            <h1>Welcome to 
+              <br />
+              IIT Mandi’s 
+              <br />
+              Film Screening Cell</h1>
+          </div>  
+        </div>
+
+        <div className="popcorn popcorn-1"></div>
+        <div className="popcorn popcorn-2"></div>
+        <div className="popcorn popcorn-3"></div>
+        <div className="popcorn popcorn-4"></div>
+        <div className="popcorn popcorn-5"></div>
+        <div className="popcorn popcorn-6"></div>
+        <div className="popcorn popcorn-7"></div>
+
+        <div>
+              <h2 className="text-xl font-semibold" style={{color:"#E40C2B",fontFamily:'Bebas Neue',marginRight:'900px',marginBottom:'-30px',marginTop:'20px',fontSize:'35px'}}>ONGOING MOVIES</h2>
+        </div>
+        <div className="flex flex-col items-between justify-center bg-black h-1/2 w-4/5 max-sm:w-[95%] my-10 rounded-xl shadow-lg">
+          <div className="flex justify-between my-3 mx-5 max-sm:mx-2" style={{backgroundColor:'#212121'}}>
+            {/* <div>
+              <h2 className="text-xl font-semibold" style={{color:"#E40C2B",fontFamily:'Bebas Neue'}}>ONGOING MOVIES</h2>
+            </div> */}
             {ongoingMovies.length > 4 && (
             <div className="flex justify-end">
               <p
@@ -93,16 +125,20 @@ const Home = () => {
             ))}
           </div>
         </div>
+        <div>
+          <h2 className="text-xl font-semibold" style={{color:"#E40C2B",fontFamily:'Bebas Neue',marginRight:'885px',marginBottom:'-30px',marginTop:'20px',fontSize:'35px'}}>UPCOMING MOVIES</h2>
+        </div>
         {upcomingMovies.length > 0 && (
-          <div className="flex flex-col bg-white h-1/2 w-4/5 max-sm:w-[95%] my-10 rounded-xl shadow-lg">
+          <div className="flex flex-col bg-black h-1/2 w-4/5 max-sm:w-[95%] my-10 rounded-xl shadow-lg">
             <div className="flex justify-between my-3 mx-5 max-sm:mx-2">
-              <div>
-                <h2 className="text-xl font-semibold">Upcoming Movies</h2>
-              </div>
+              {/* <div>
+                <h2 className="text-xl font-semibold" style={{color:"#E40C2B",fontFamily:'Bebas Neue',marginRight:'900px',marginBottom:'-30px',marginTop:'20px',fontSize:'35px'}}>UPCOMING MOVIES</h2>
+              </div> */}
               <div className="flex justify-end">
                 <p
                   className="font-inter text-sm cursor-pointer"
                   onClick={toggleShowMoreUpcoming}
+                  style={{color:"white"}}
                 >
                   {showMoreUpcoming ? "Show Less" : "Show More"}
                 </p>

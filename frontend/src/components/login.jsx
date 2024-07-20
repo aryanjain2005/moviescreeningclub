@@ -2,7 +2,8 @@ import  { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useMembershipContext } from "./MembershipContext";
-import imageOne from "../images/home_cinema.svg";
+// import imageOne from "../images/home_cinema.svg";
+import imageOne from "../images/home_cinema.png";
 import { useLogin } from "./LoginContext";
 import { SERVERIP } from "../config";
 import Swal from "sweetalert2";
@@ -112,6 +113,7 @@ const Login = () => {
                 </p>
               </div>
               <div className="flex flex-col items-center gap-3 h-[60%] max-sm:text-sm">
+                <span className="details">Email</span>
                 <div className="flex justify-center text-lg h-[15%] w-[82%] border rounded-2xl">
                   <div className="flex items-center">
                     <svg
@@ -129,6 +131,7 @@ const Login = () => {
                         d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25"
                       />
                     </svg>
+                  
                   </div>
                   <input
                     type="email"
@@ -141,6 +144,7 @@ const Login = () => {
                     onChange={handleChange}
                   />
                 </div>
+                <span className="details">Password</span>
                 <div className="flex justify-center text-lg h-[15%] w-[82%] border rounded-2xl">
                   <div
                     className="flex items-center"
