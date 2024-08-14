@@ -63,7 +63,8 @@ const freepasses = async (req, res) => {
         $in: movie.showtimes.map((showtime) => showtime._id)
       },
       free: true,
-      user: req.user.userId
+      user: req.user.userId,
+      deleted: false
     })
     return res.status(200).json({ count })
   } catch (error) {

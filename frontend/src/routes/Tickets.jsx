@@ -38,13 +38,21 @@ const Tickets = () => {
       </div>
     )
   }
-  const handleDelete = async (e, id) => {
+  const handleDelete = async (e, ticket) => {
     e.stopPropagation()
-
-    const res = await api.delete(`/qr/${id}`)
-    if (res.status === 200) {
-      fetchTickets()
-    }
+    Swal.fire({
+      text: `You sure you want to delete ticket for ${ticket.movie.title}- ${ticket.seat}`,
+      icon: 'error',
+      confirmButtonText: 'Cancel',
+      showCancelButton: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await api.delete(`/qr/${ticket.id}`)
+        if (res.status === 200) {
+          fetchTickets()
+        }
+      }
+    })
   }
   return (
     <div className="flex h-full flex-col gap-6 p-8">
@@ -137,7 +145,7 @@ const Tickets = () => {
                       </p>
                       {ticket.free && (
                         <button
-                          onClick={(e) => handleDelete(e, ticket.id)}
+                          onClick={(e) => handleDelete(e, ticket)}
                           className="w-fit px-4 bg-red-600 rounded-lg text-white py-2"
                         >
                           Cancel Ticket
