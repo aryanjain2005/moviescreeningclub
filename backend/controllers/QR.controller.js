@@ -13,7 +13,8 @@ const getQRs = async (req, res) => {
     const resQr = {
       used: [],
       unused: [],
-      expired: []
+      expired: [],
+      cancelled: []
     }
     for (qr of allQRs) {
       if (qr.expirationDate > new Date()) {
@@ -25,10 +26,19 @@ const getQRs = async (req, res) => {
             seat: qr.seat,
             used: qr.used
           })
+        } else if (qr.deleted) {
+          resQr.cancelled.push({
+            expirationDate: qr.expirationDate,
+            isValid: qr.isValid,
+            registrationDate: qr.registrationDate,
+            seat: qr.seat,
+            used: qr.used
+          })
         } else {
           const movie = await Movie.findOne({ 'showtimes._id': qr.showtime })
 
           resQr.unused.push({
+            id: qr._id,
             qrData: await QRCode.toDataURL(qr.code),
             expirationDate: qr.expirationDate,
             isValid: qr.isValid,
@@ -39,7 +49,8 @@ const getQRs = async (req, res) => {
               title: movie.title,
               genre: movie.genre,
               showtime: movie.showtimes.id(qr.showtime)
-            }
+            },
+            free: qr.free || false
           })
         }
       } else {
@@ -59,6 +70,31 @@ const getQRs = async (req, res) => {
   } catch (error) {
     console.error('Error fetching valid QR codes:', error)
     res.status(500).json({ error: 'Error fetching valid QR codes' })
+  }
+}
+
+const cancelQr = async (req, res) => {
+  try {
+    const qrId = req.params.id
+    const qr = await QR.findOneAndUpdate(
+      {
+        _id: qrId,
+        user: req.user.userId,
+        used: false,
+        deleted: false
+      },
+      { deleted: true },
+      {
+        new: true
+      }
+    )
+    if (!qr) {
+      return res.status(404).json({ error: 'QR not found' })
+    }
+    res.status(200).json({ message: 'QR cancelled' })
+  } catch (error) {
+    console.error('Error:', error)
+    res.status(500).json({ error: 'Internal server error  ' })
   }
 }
 const check = async (req, res) => {
@@ -83,6 +119,12 @@ const check = async (req, res) => {
     if (!qr) {
       return res.json({ exists: false })
     }
+    if (qr.deleted) {
+      return res.json({
+        exists: true,
+        cancelled: true
+      })
+    }
     if (qr.used) {
       return res.json({
         exists: true,
@@ -99,13 +141,24 @@ const check = async (req, res) => {
         used: false
       })
     }
-    qr.used = true
-    await qr.save()
+
+    const updateed = await QR.findOneAndUpdate(
+      { _id: qrId, used: false },
+      { used: true }
+    )
+    if (!updateed) {
+      return res.json({
+        exists: true,
+        validityPassed: false,
+        used: true
+      })
+    }
     const movie = await Movie.findOne({ 'showtimes._id': qr.showtime })
     return res.json({
       exists: true,
       validityPassed: false,
       used: false,
+      cancelled: false,
       email: qr.user.email,
       seat: qr.seat,
       name: qr.user.name,
@@ -119,5 +172,6 @@ const check = async (req, res) => {
 }
 module.exports = {
   getQRs,
-  check
+  check,
+  cancelQr
 }

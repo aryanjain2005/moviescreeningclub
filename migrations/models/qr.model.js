@@ -23,7 +23,9 @@ const QRSchema = new mongoose.Schema({
   },
   txnId: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.free;
+    },
   },
   code: {
     type: String,
@@ -40,6 +42,10 @@ const QRSchema = new mongoose.Schema({
   isValid: {
     type: Boolean,
     default: true,
+  },
+  deleted: {
+    type: Boolean,
+    default: false,
   },
   seat: {
     type: String,

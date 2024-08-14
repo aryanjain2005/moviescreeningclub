@@ -38,7 +38,14 @@ const Tickets = () => {
       </div>
     )
   }
+  const handleDelete = async (e, id) => {
+    e.stopPropagation()
 
+    const res = await api.delete(`/qr/${id}`)
+    if (res.status === 200) {
+      fetchTickets()
+    }
+  }
   return (
     <div className="flex h-full flex-col gap-6 p-8">
       <p className="w-full text-center font-bn text-xl font-bold sm:text-5xl">
@@ -128,6 +135,14 @@ const Tickets = () => {
                           }
                         )}
                       </p>
+                      {ticket.free && (
+                        <button
+                          onClick={(e) => handleDelete(e, ticket.id)}
+                          className="w-fit px-4 bg-red-600 rounded-lg text-white py-2"
+                        >
+                          Cancel Ticket
+                        </button>
+                      )}
                     </div>
                   </div>
                 )
@@ -168,6 +183,34 @@ const Tickets = () => {
           <p className="text-xl font-bold sm:text-2xl">Expired Tickets</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {tickets.expired.map((ticket) => (
+              <div
+                key={ticket._id}
+                className="flex flex-col gap-2 rounded-lg bg-gray-400 dark:bg-gray-800 p-4 shadow-md"
+              >
+                <p>
+                  <span className="font-semibold">Seat: </span>
+                  {ticket.seat}
+                </p>
+                <p>
+                  {' '}
+                  <span className="font-semibold">Purchase Date: </span>
+                  {new Date(ticket.registrationDate).toLocaleString('en-IN')}
+                </p>
+                <p>
+                  {' '}
+                  <span className="font-semibold">Expiration Date: </span>
+                  {new Date(ticket.expirationDate).toLocaleString('en-IN')}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {tickets.cancelled.length > 0 && (
+        <div className="flex flex-col gap-6">
+          <p className="text-xl font-bold sm:text-2xl">cancelled Tickets</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {tickets.cancelled.map((ticket) => (
               <div
                 key={ticket._id}
                 className="flex flex-col gap-2 rounded-lg bg-gray-400 dark:bg-gray-800 p-4 shadow-md"

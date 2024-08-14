@@ -43,6 +43,10 @@ const QRSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  deleted: {
+    type: Boolean,
+    default: false
+  },
   seat: {
     type: String,
     required: true
