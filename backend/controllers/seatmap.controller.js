@@ -116,6 +116,7 @@ const seatAssign = async (req, res) => {
           $in: movie.showtimes.map((showtime) => showtime._id)
         },
         free: true,
+        deleted: false,
         user: req.user.userId
       })
 

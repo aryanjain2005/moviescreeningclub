@@ -2,6 +2,7 @@ const QRCode = require('qrcode')
 const jwt = require('jsonwebtoken')
 const QR = require('@/models/qr.model')
 const Movie = require('@/models/movie.model')
+const SeatMap = require('@/models/seatmap.model')
 
 const getQRs = async (req, res) => {
   const { userId } = req.user
@@ -74,29 +75,48 @@ const getQRs = async (req, res) => {
 }
 
 const cancelQr = async (req, res) => {
+  const session = await QR.startSession()
+  session.startTransaction()
   try {
     const qrId = req.params.id
     const qr = await QR.findOneAndUpdate(
       {
         _id: qrId,
         user: req.user.userId,
+        free: true,
         used: false,
         deleted: false
       },
       { deleted: true },
       {
-        new: true
+        new: true,
+        session
       }
     )
     if (!qr) {
+      await session.abortTransaction()
       return res.status(404).json({ error: 'QR not found' })
     }
-    res.status(200).json({ message: 'QR cancelled' })
+    const seatMap = await SeatMap.findOneAndUpdate(
+      { showtimeId: qr.showtime },
+      { $set: { [`seats.${qr.seat}`]: null } },
+      { new: true, session }
+    )
+    if (!seatMap) {
+      await session.abortTransaction()
+      throw new Error('Error cancelling QR')
+    }
+    await session.commitTransaction()
+    return res.status(200).json({ message: 'QR cancelled' })
   } catch (error) {
+    await session.abortTransaction()
     console.error('Error:', error)
-    res.status(500).json({ error: 'Internal server error  ' })
+    return res.status(500).json({ error: 'Internal server error' })
+  } finally {
+    session.endSession()
   }
 }
+
 const check = async (req, res) => {
   try {
     const qrData = req.body.qrData
