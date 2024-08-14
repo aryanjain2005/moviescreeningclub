@@ -44,7 +44,7 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, '../frontend/dist')))
+// app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
 app.use((req, _, next) => {
   if (!req.url.match(/(assets|images|index\.html|.*\.(svg|png|jpg|jpeg))$/)) {
@@ -53,11 +53,12 @@ app.use((req, _, next) => {
   next()
 })
 
-app.use('/api', apiRoute)
+app.use('/', apiRoute)
+// app.use('/api', apiRoute)
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'))
-})
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'))
+// })
 
 https.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

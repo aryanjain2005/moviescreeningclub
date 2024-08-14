@@ -66,3 +66,35 @@
                 </Location>
         </VirtualHost>
 </IfModule>
+
+
+
+
+
+======================= NEW ===========================
+
+<VirtualHost *:80>
+    ServerAdmin lalit@iitmandi.ac.in
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    Redirect / https://chalchitra.iitmandi.ac.in
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+    <VirtualHost _default_:443>
+        ServerAdmin lalit@iitmandi.ac.in
+        ServerName chalchitra.iitmandi.ac.in
+        ServerAlias www.chalchitra.iitmandi.ac.in
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+        SSLEngine on
+        SSLCertificateFile /etc/apache2/ssl/SSL.crt
+        SSLCertificateKeyFile /etc/apache2/ssl/SSL.key
+        SSLCACertificateFile /etc/apache2/ssl/SSL_Bundle.crt
+
+        # Redirect all requests to localhost:8000
+        ProxyPass / http://localhost:8000/
+        ProxyPassReverse / http://localhost:8000/
+        ProxyPreserveHost On
+    </VirtualHost>
+</IfModule>
