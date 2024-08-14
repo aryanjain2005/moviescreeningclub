@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const baseUrl =
   import.meta.env.VITE_environment === 'development'
-    ? 'http://chalchitra.iitmandi.ac.in/api'
+    ? 'https://chalchitra.iitmandi.ac.in/api'
     : '/api'
 export const api = axios.create({
   baseURL: baseUrl,
