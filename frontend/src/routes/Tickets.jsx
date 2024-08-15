@@ -43,7 +43,7 @@ const Tickets = () => {
     Swal.fire({
       text: `You sure you want to delete ticket for ${ticket.movie.title}- ${ticket.seat}`,
       icon: 'error',
-      confirmButtonText: 'Cancel',
+      confirmButtonText: 'Confirm',
       showCancelButton: true
     }).then(async (result) => {
       if (result.isConfirmed) {
