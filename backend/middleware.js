@@ -21,7 +21,6 @@ const isAllowedLvl = (minLevel, userType) =>
 
 const verifyJWTWithRole = (minRole = 'standard') => {
   return (req, res, next) => {
-    // cookies
     const token = req.cookies?.token
     if (token) {
       jwt.verify(
@@ -29,6 +28,7 @@ const verifyJWTWithRole = (minRole = 'standard') => {
         `${process.env.JWT_SECRET || 'secret'}`,
         (err, user) => {
           if (err) {
+            res.cookies('token', '', { maxAge: 0 })
             return res.sendStatus(403)
           }
           if (!isAllowedLvl(minRole, user.usertype)) {
