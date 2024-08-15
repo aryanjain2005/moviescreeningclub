@@ -127,7 +127,17 @@ const Movie = () => {
           <span className="font-bold">Seats: </span> {selectedSeats.join(', ')}
         </p>
         <button
+          disabled={loading}
           onClick={() => {
+            if (loading) return
+            if (!selectedSeats.length) {
+              Swal.fire({
+                title: 'Error',
+                text: 'Please select seats to book',
+                icon: 'error'
+              })
+              return
+            }
             Swal.fire({
               title: 'Confirm',
               text: `Are you sure you want to book these seat(s) ${selectedSeats.join(', ')} ?`,
