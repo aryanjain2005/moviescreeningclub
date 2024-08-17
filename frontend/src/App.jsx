@@ -31,7 +31,7 @@ function App() {
   const [popcorns, setPopcorns] = useState([])
   useEffect(() => {
     const script = document.createElement('script')
-    script.src = import.meta.env.VITE_PAYEMENT_GATEWAY_URL + `?v=${new Date()}`
+    script.src = import.meta.env.VITE_PAYEMENT_GATEWAY_URL + `?v2=${new Date()}`
     script.async = true
     document.body.appendChild(script)
 
