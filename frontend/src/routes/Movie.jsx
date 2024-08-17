@@ -54,6 +54,30 @@ const Movie = () => {
       console.error('Error fetching free passes:', error)
     }
   }
+  const getDateFormatted = (dateS) => {
+    const date = new Date(dateS)
+    const day = date.getDate()
+    const suffix =
+      day % 10 === 1 && day !== 11 ? (
+        <sup>st</sup>
+      ) : day % 10 === 2 && day !== 12 ? (
+        <sup>nd</sup>
+      ) : day % 10 === 3 && day !== 13 ? (
+        <sup>rd</sup>
+      ) : (
+        <sup>th</sup>
+      )
+
+    const month = date.toLocaleString('en-IN', { month: 'short' })
+    const time = date.toLocaleString('en-IN', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      timeZone: 'Asia/Kolkata'
+    })
+
+    return { day, month, time }
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -164,7 +188,7 @@ const Movie = () => {
   return (
     <div className="flex w-full flex-col items-center relative -mb-10">
       <div className="flex w-full flex-col items-center p-4">
-        <div className="flex w-full max-sm:flex-col justify-between items-center sm:items-start gap-6 p-4">
+        <div className="flex w-full max-md:flex-col justify-between items-center sm:items-start gap-6 p-4">
           <div className="w-[50vw] sm:w-[30vw] xl:w-[20vw]">
             <MovieCard movie={movie}>
               <p className="text-sm mt-1 overflow-y-auto hide-scroll">
@@ -202,19 +226,28 @@ const Movie = () => {
             </div>
             <div className="flex flex-col">
               <p className="mb-1 font-bold">Showtimes available</p>
-              {movie?.showtimes.map((showtime) => (
-                <button
-                  key={showtime._id}
-                  onClick={() => {
-                    fetchSeats(showtime._id)
-                    setShowtime(showtime._id)
-                    setSelectedSeats([])
-                  }}
-                  className="rounded-md hover:underline"
-                >
-                  {new Date(showtime.date).toLocaleString('en-IN')}
-                </button>
-              ))}
+              <div className="grid grid-cols-2  sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+                {movie?.showtimes.map((showtimeM) => {
+                  const dateFor = getDateFormatted(showtimeM.date)
+                  return (
+                    <button
+                      key={showtimeM._id}
+                      onClick={() => {
+                        fetchSeats(showtimeM._id)
+                        setShowtime(showtimeM._id)
+                        setSelectedSeats([])
+                      }}
+                      className={`flex flex-col items-center justify-center rounded-lg p-2 sm:p-4 text-center text-white hover:bg-green-600 hover:dark:bg-green-800 ${showtimeM._id === showtime ? 'bg-green-700 dark:bg-green-900' : 'bg-green-300 dark:bg-green-500'}`}
+                    >
+                      <p className="text-lg">{`${dateFor.day} ${dateFor.month}`}</p>
+                      <p className="text-md">{dateFor.time}</p>
+                    </button>
+                  )
+                })}
+                <div className="hidden bg-green-700 dark:bg-green-900 " />
+              </div>
+              <div className="hidden bg-green-300 dark:bg-green-500" />
+
               {isAllowedLvl('movievolunteer', user.usertype) && (
                 <button
                   onClick={() => {
