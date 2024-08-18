@@ -25,13 +25,16 @@ import MyAccount from '@/routes/MyAccount'
 import Showtime from '@/routes/Showtime'
 import Tickets from '@/routes/Tickets'
 import MovieList from '@/routes/VotePage'
+import FoodList from '@/routes/FoodItem'
+import AdminFood from '@/routes/AdminFoodCorner'
+
 const Scanner = lazy(() => import('@/routes/Scanner'))
 
 function App() {
   const [popcorns, setPopcorns] = useState([])
   useEffect(() => {
     const script = document.createElement('script')
-    script.src = import.meta.env.VITE_PAYEMENT_GATEWAY_URL + `?v=${new Date()}`
+    script.src = import.meta.env.VITE_PAYEMENT_GATEWAY_URL + `?v2=${new Date()}`
     script.async = true
     document.body.appendChild(script)
 
@@ -155,6 +158,22 @@ function App() {
                   element={
                     <AuthenticatedRoute>
                       <MovieList />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/food"
+                  element={
+                    <AuthenticatedRoute>
+                      <FoodList />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/adminfood"
+                  element={
+                    <AuthenticatedRoute minLevel="admin">
+                      <AdminFood />
                     </AuthenticatedRoute>
                   }
                 />

@@ -247,17 +247,33 @@ const Movie = () => {
                 <div className="hidden bg-green-700 dark:bg-green-900 " />
               </div>
               <div className="hidden bg-green-300 dark:bg-green-500" />
+<<<<<<< HEAD
 
+=======
+              {/* <a href='/food'>
+                <button
+                  className="w-full px-4 bg-yellow-600 rounded-lg text-white font-bold py-2 my-10">
+                  Order Food
+                </button>
+              </a> */}
+>>>>>>> food
               {isAllowedLvl('movievolunteer', user.usertype) && (
+                <>
                 <button
                   onClick={() => {
                     navigate('/showtime?movieId=' + movieId)
                   }}
-                  className="rounded-md bg-red-500 p-2 text-white"
-                >
+                  className="rounded-md bg-red-500 p-2 text-white my-5">
                   Edit
                 </button>
+              </>
               )}
+              <a href='/food'>
+                <button
+                  className="w-full px-4 bg-yellow-600 rounded-lg text-white font-bold py-2 my-10">
+                  Order Food
+                </button>
+              </a>
             </div>
           </div>
         </div>
