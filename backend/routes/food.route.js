@@ -6,5 +6,6 @@ const orderController = require('@/controllers/food.controller');
 // router.post('/orders', orderController.createOrder);
 router.post('/create', orderController.createOrder);
 router.get('/orders', orderController.getOrders);
+router.get('/verify-otp',orderController.verifyOtp);
 
 module.exports = router;

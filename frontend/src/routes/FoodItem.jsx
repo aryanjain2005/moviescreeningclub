@@ -61,7 +61,6 @@ const OrderPage = () => {
 
     const handleSubmitOrder = async () => {
         if (!selectedMovie || !selectedShowtime) {
-            // alert('Please select a movie and showtime');
             Swal.fire({ title: 'Error', text: 'Please select a movie and showtime', icon: 'error' })
             return;
         }
@@ -88,13 +87,11 @@ const OrderPage = () => {
             });
             console.log(orderData);
             if (response.ok) {
-                // alert('Order placed successfully!');
                 Swal.fire({ title: 'Success', text: 'Order placed successfully', icon: 'success' })
                 setSelectedItems([]);
                 setSelectedMovie(null);
                 setSelectedShowtime(null);
             } else {
-                // alert('Failed to place order.');
                 Swal.fire({ title: 'Error', text: 'Failed to place order', icon: 'error' })
             }
         } catch (error) {
