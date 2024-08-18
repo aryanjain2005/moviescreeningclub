@@ -168,9 +168,9 @@ const Navbar = () => {
             <NavItem disabled>VotePage</NavItem>
           </>
         )}
-        <NavItem to="/food" toggleMenu={toggleMenu}>
+        {/* <NavItem to="/food" toggleMenu={toggleMenu}>
           Order Food
-        </NavItem>
+        </NavItem> */}
         <NavItem to="/guidelines" toggleMenu={toggleMenu}>
           Booking Guidelines/Help
         </NavItem>
