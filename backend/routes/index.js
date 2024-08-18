@@ -10,6 +10,8 @@ const SeatMapRouter = require('@/routes/seatmap.route')
 const movieRouter = require('@/routes/movies.route')
 const qrRouter = require('@/routes/qr.route')
 const metricsRouter = require('@/routes/metrics.route')
+const foodRoutes = require("@/routes/food.route")
+const AdminFood = require("@/routes/AdminFood.route")
 
 router.use('/user', userRouter)
 router.use('/auth', authRouter)
@@ -21,5 +23,7 @@ router.use('/seatmap', SeatMapRouter)
 router.use('/membership', membershipRouter)
 router.use('/vote', votepagerouter)
 router.use('/metrics', metricsRouter)
+router.use('/food', foodRoutes)
+router.use('/adminfood', AdminFood)
 
 module.exports = router

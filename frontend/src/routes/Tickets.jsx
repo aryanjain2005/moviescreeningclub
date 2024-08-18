@@ -59,6 +59,12 @@ const Tickets = () => {
       <p className="w-full text-center font-bn text-xl font-bold sm:text-5xl">
         Tickets
       </p>
+      <a href='/food'>
+      <button
+        className="w-full px-4 bg-yellow-600 rounded-lg text-white font-bold py-2 my-2">
+        Order Food
+      </button>
+      </a>
       {tickets.unused.length === 0 &&
         tickets.used.length === 0 &&
         tickets.expired.length === 0 && (

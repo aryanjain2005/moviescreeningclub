@@ -139,6 +139,9 @@ const Navbar = () => {
                 <NavItem to="/metrics" toggleMenu={toggleMenu}>
                   Metrics
                 </NavItem>
+                <NavItem to="/adminfood" toggleMenu={toggleMenu}>
+                  Food Corner
+                </NavItem>
               </>
             )}
             {isAllowedLvl('ticketvolunteer', user?.usertype) && (
@@ -165,6 +168,9 @@ const Navbar = () => {
             <NavItem disabled>VotePage</NavItem>
           </>
         )}
+        <NavItem to="/food" toggleMenu={toggleMenu}>
+          Order Food
+        </NavItem>
         <NavItem to="/guidelines" toggleMenu={toggleMenu}>
           Booking Guidelines/Help
         </NavItem>
