@@ -29,6 +29,7 @@ import Showtime from '@/routes/Showtime'
 import Tickets from '@/routes/Tickets'
 import MovieList from '@/routes/VotePage'
 import AddBaseMem from '@/routes/addBaseMem'
+import TicketPrices from '@/routes/TicketPrices'
 
 const Scanner = lazy(() => import('@/routes/Scanner'))
 
@@ -189,11 +190,12 @@ function App() {
                 />
                 <Route path="/guidelines" element={<Guidelines />} />
                 <Route path="/metrics" element={<Metrics />} />
+                <Route path="/addbasetocore" element={<AddBaseMem />} />
                 <Route
-                  path="/addbasetocore"
+                  path="/ticketprices"
                   element={
                     <AuthenticatedRoute minLevel="admin">
-                      <AddBaseMem />
+                      <TicketPrices />
                     </AuthenticatedRoute>
                   }
                 />

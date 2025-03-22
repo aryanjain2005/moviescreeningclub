@@ -1,6 +1,6 @@
 const Membership = require('@/models/membership.model')
 const User = require('@/models/user/user.model')
-const memData = require('@constants/memberships.json')
+const MemPrice = require('@/models/membershipprice.model')
 const crypto = require('crypto')
 const { membershipMail } = require('@/utils/mail')
 const { getAmount } = require('@/utils/membership')
@@ -8,6 +8,32 @@ const { getAtomFromGateway } = require('@/utils/payment')
 require('dotenv').config()
 
 const { decrypt, generateSignature } = require('@/utils/payment')
+
+const getMembershipPrices = async (req, res) => {
+  try {
+    const membershipPrices = await MemPrice.find();
+    return res.status(200).json(membershipPrices);
+  } catch (error) {
+    console.error("Error fetching membership prices:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+const setMembershipPrice = async (req, res) => {
+  try {
+    const { name, price, validity, availQR } = req.body;
+
+    const updatedMembership = await MemPrice.findOneAndUpdate(
+      { name },
+      { price, validity, availQR },
+      { new: true, upsert: true }
+    );
+
+    return res.status(200).json(updatedMembership);
+  } catch (error) {
+    console.error("Error updating membership price:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const saveMembership = async (req, res) => {
   try {
@@ -43,6 +69,7 @@ const saveMembership = async (req, res) => {
         return res.redirect(`${process.env.FRONTEND_URL}/home`)
       }
     }
+    const memData = await MemPrice.find();
     const memDetails = memData.find((m) => m.name === memtype)
     const { validity, availQR } = memDetails
     const newusermem = new Membership({
@@ -67,6 +94,7 @@ const saveMembership = async (req, res) => {
 }
 const assignBaseMembership = async (req, res) => {
   try {
+    const memData = await MemPrice.find()
     const coreTeamUsers = await User.find({ usertype: 'ticketvolunteer' })
     const baseMembership = memData.find((m) => m.name === 'base')
 
@@ -100,6 +128,7 @@ const requestMembership = async (req, res) => {
   try {
     const { userId } = req.user
     const { memtype } = req.body
+    const memData = await MemPrice.find();
     if (!memtype || memData.map((m) => m.name).indexOf(memtype) === -1) {
       return res.status(400).json({ message: 'Membership type is required' })
     }
@@ -108,7 +137,6 @@ const requestMembership = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-
     const userMemberships = await Membership.find({
       user: user._id,
       isValid: true
@@ -129,7 +157,7 @@ const requestMembership = async (req, res) => {
       .toISOString()
       .replace(/T/, ' ')
       .replace(/\..+/, '')
-    const amount = getAmount(memtype, user.email)
+    const amount = await getAmount(memtype, user.email)
     const userEmailId = user.email
     const userContactNo = user.phone
 
@@ -158,7 +186,7 @@ const requestMembership = async (req, res) => {
     })
   } catch (error) {
     console.error('Error requesting membership:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    res.status(500).json({ error: 'Internal Server Error' })
   }
 }
 
@@ -223,10 +251,14 @@ const suspendMembership = async (req, res) => {
   }
 }
 
+
+
 module.exports = {
   saveMembership,
   checkMembership,
   suspendMembership,
   requestMembership,
   assignBaseMembership,
+  getMembershipPrices,
+  setMembershipPrice,
 }
