@@ -65,6 +65,36 @@ const saveMembership = async (req, res) => {
     )
   }
 }
+const assignBaseMembership = async (req, res) => {
+  try {
+    const coreTeamUsers = await User.find({ usertype: 'ticketvolunteer' })
+    const baseMembership = memData.find((m) => m.name === 'base')
+
+    if (!baseMembership) {
+      return res.status(400).json({ message: 'Base membership not found' })
+    }
+
+    const { validity, availQR } = baseMembership
+
+    const newMemberships = coreTeamUsers.map(user => ({
+      user: user._id,
+      memtype: 'base',
+      txnId: 'coreteam',
+      validity,
+      availQR,
+      amount: getAmount('base', user.email),
+      validitydate: new Date(Date.now() + validity * 1000),
+    }))
+
+    await Membership.insertMany(newMemberships)
+
+    return res.status(200).json({ message: 'Base membership assigned successfully to all core team users' })
+  } catch (error) {
+    console.error('Error assigning base membership:', error)
+    return res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
 
 const requestMembership = async (req, res) => {
   try {
@@ -197,5 +227,6 @@ module.exports = {
   saveMembership,
   checkMembership,
   suspendMembership,
-  requestMembership
+  requestMembership,
+  assignBaseMembership,
 }
