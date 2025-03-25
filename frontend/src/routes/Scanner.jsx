@@ -54,6 +54,7 @@ export const Scanner = () => {
       if (code) {
         setScanResult(code.data)
         sendApiRequest(code.data)
+        storeScannedData(code.data)
         stopCamera()
       } else {
         requestAnimationFrame(checkQRCode)
@@ -74,7 +75,20 @@ export const Scanner = () => {
     }
   }
 
-  const sendApiRequest = async (result) => {
+  //storing data in local storage
+  const storeScannedData = (data) => {
+    const timestamp = Date.now();
+    localStorage.setItem('lastQR', JSON.stringify({ data, timestamp }));
+
+    setTimeout(() => {
+      const storedData = JSON.parse(localStorage.getItem('lastQR'));
+      if (storedData && storedData.timestamp === timestamp) {
+        localStorage.removeItem('lastQR');
+      }
+    }, 60000); // Delete after 1 minute
+  };
+
+  const sendApiRequest = async (result,reprinted=false) => {
     try {
       const response = await api.post(`/QR/check`, {
         qrData: result
@@ -85,7 +99,7 @@ export const Scanner = () => {
       const data = await response.data
       setScanResultInfo(data)
       if (data && data.exists && !data.used && !data.validityPassed) {
-        return printTicket(data)
+        return printTicket(data,reprinted)
       }
       if (data && data.exists && data.used) {
         Swal.fire({
@@ -108,7 +122,7 @@ export const Scanner = () => {
     }
   }
 
-  const printTicket = (data) => {
+  const printTicket = (data,reprinted) => {
     const printContent = `
     <html lang="en">
         <head>
@@ -189,16 +203,16 @@ export const Scanner = () => {
                             <p class="line-between"></p>
                             <p class="subtitle">${data.movie}</p>
                             <p class="subtitle">${new Date(
-                              data.show
-                            ).toLocaleString('en-IN', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: 'numeric',
-                              minute: 'numeric',
-                              hour12: true
-                            })}</p>
-
+      data.show
+    ).toLocaleString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    })}</p>
+                        ${reprinted ? `<p class="subtitle">(REPRINTED)</p>` : ''}
                         </div>
                         <div class="seat-number">Seat Number: ${data.seat}</div>
                         <div class="footer">
@@ -221,22 +235,59 @@ export const Scanner = () => {
     if (scanResultInfo.validityPassed) return 'Validity of this QR has expired'
     return `Ticket for ${scanResultInfo.name} (${scanResultInfo.email}) for ${scanResultInfo.movie} on ${new Date(scanResultInfo.show).toLocaleDateString('en-IN')} `
   }
+
+  //print last scanned qr
+  const printLastScannedQR = async () => {
+    try {
+      const lastQR = JSON.parse(localStorage.getItem('lastQR'));
+      
+      if (!lastQR) {
+        Swal.fire({ title: 'Error', text: 'No QR code has been scanned yet', icon: 'error' });
+        return;
+      }
+      
+      if (Date.now() - lastQR.timestamp >= 60000) {
+        localStorage.removeItem('lastQR');
+        Swal.fire({ title: 'Error', text: 'The last scanned QR code has expired', icon: 'error' });
+        return;
+      }
+      
+      await sendApiRequest(lastQR.data,true);
+      localStorage.removeItem('lastQR');
+      
+    } catch (error) {
+      console.error('Error printing last QR:', error);
+      Swal.fire({ title: 'Error', text: 'Failed to print last QR code', icon: 'error' });
+    }
+  };
+
   return (
-    <div className="mt-6 flex h-full w-full justify-center font-monts">
-      <div style={{ maxWidth: '100%', height: 'auto' }}>
-        {scanResult ? (
-          <div>{getInfo()}</div>
-        ) : (
-          <video ref={videoRef} width="100%" height="auto"></video>
-        )}
+    <div className='h-full w-full'>
+      <div className=" w-full flex justify-end">
+        <button
+          className="px-4 py-2 mr-6 bg-red-700 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+          onClick={printLastScannedQR}
+        >
+          Print Last Scanned QR
+        </button>
       </div>
-      <iframe
-        name="print_frame"
-        width="0"
-        height="0"
-        frameBorder="0"
-        src="about:blank"
-      ></iframe>
+      <div className="mt-4 flex h-full w-full justify-center font-monts">
+        <div style={{ maxWidth: '100%', height: 'auto' }}>
+          {scanResult ? (
+            <div>{getInfo()}</div>
+          ) : (
+            <video ref={videoRef} width="100%" height="auto"></video>
+          )}
+        </div>
+
+        <iframe
+          name="print_frame"
+          width="0"
+          height="0"
+          frameBorder="0"
+          src="about:blank"
+        ></iframe>
+      </div>
     </div>
   )
 }
