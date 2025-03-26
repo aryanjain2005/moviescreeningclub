@@ -1,6 +1,6 @@
 const Membership = require('@/models/membership.model')
 const User = require('@/models/user/user.model')
-const memData = require('@constants/memberships.json')
+const MemPrice = require('@/models/membershipprice.model')
 const crypto = require('crypto')
 const { membershipMail } = require('@/utils/mail')
 const { getAmount } = require('@/utils/membership')
@@ -8,6 +8,33 @@ const { getAtomFromGateway } = require('@/utils/payment')
 require('dotenv').config()
 
 const { decrypt, generateSignature } = require('@/utils/payment')
+
+const getMembershipPrices = async (req, res) => {
+  try {
+    const membershipPrices = await MemPrice.find();
+    return res.status(200).json(membershipPrices);
+  } catch (error) {
+    console.error("Error fetching membership prices:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const setMembershipPrice = async (req, res) => {
+  try {
+    const { name, price, validity, availQR } = req.body;
+
+    const updatedMembership = await MemPrice.findOneAndUpdate(
+      { name },
+      { price, validity, availQR },
+      { new: true, upsert: true }
+    );
+
+    return res.status(200).json(updatedMembership);
+  } catch (error) {
+    console.error("Error updating membership price:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const saveMembership = async (req, res) => {
   try {
@@ -65,6 +92,47 @@ const saveMembership = async (req, res) => {
     )
   }
 }
+
+const manualAdd = async (req, res) => {
+  try {
+    const { userEmail, txnId, membershipType, amount } = req.body;
+    
+    if (!/^[a-f0-9]{32}$/i.test(txnId)) {
+      return res.status(400).json({ error: 'Invalid transaction ID' });
+    }
+
+    const user = await User.findOne({ email: userEmail.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const memData = await MemPrice.find();
+    const memDetails = memData.find((m) => m.name === membershipType);
+    if (!memDetails) {
+      return res.status(400).json({ error: 'Invalid membership type' });
+    }
+
+    const { validity, availQR } = memDetails;
+    const newMembership = new Membership({
+      user: user._id,
+      memtype: membershipType,
+      txnId,
+      validity,
+      availQR,
+      amount,
+      validitydate: new Date(Date.now() + validity * 1000),
+    });
+    
+    await newMembership.save();
+    await membershipMail(membershipType, userEmail.toLowerCase());
+    
+    res.status(201).json({ success: true, message: 'Membership added successfully' });
+  } catch (error) {
+    console.error('Error in manualAdd:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 const assignBaseMembership = async (req, res) => {
   try {
     const coreTeamUsers = await User.find({ usertype: 'ticketvolunteer' })
@@ -229,4 +297,7 @@ module.exports = {
   suspendMembership,
   requestMembership,
   assignBaseMembership,
+  getMembershipPrices,
+  setMembershipPrice,
+  manualAdd,
 }
