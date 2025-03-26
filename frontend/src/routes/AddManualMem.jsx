@@ -56,7 +56,7 @@ const MovieForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     api
-      .post('/membership/add-new', formData)
+      .post('/membership/manual-add', formData)
       .then(() => {
         setFormData({
           userEmail: '',
@@ -66,7 +66,10 @@ const MovieForm = () => {
         });
         navigate('/home');
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({ title: 'Error', text: err.response.data.error, icon: 'error' })
+      });
   };
 
   return (
