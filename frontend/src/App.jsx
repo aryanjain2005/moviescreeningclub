@@ -31,7 +31,6 @@ import MovieList from '@/routes/VotePage'
 import AddBaseMem from '@/routes/addBaseMem'
 import AddManualMem from '@/routes/AddManualMem.jsx'
 
-
 const Scanner = lazy(() => import('@/routes/Scanner'))
 
 function App() {
