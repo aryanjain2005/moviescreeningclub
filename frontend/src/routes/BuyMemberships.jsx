@@ -3,10 +3,23 @@ import { useLogin } from '@/components/LoginContext'
 import { useMembershipContext } from '@/components/MembershipContext'
 import { api } from '@/utils/api'
 import { getUserType } from '@/utils/user'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
-import memData from '../../../constants/memberships.json'
+
+const getMemData = async () => {
+  try {
+    const res = await api.get('/membership/prices')
+    if (res.status !== 200) {
+      console.error('Error fetching membership data:', res.data.error)
+      return []
+    }
+    return res.data
+  } catch (err) {
+    console.error('Error fetching membership data:', err)
+    return []
+  }
+}
 
 const MembershipCard = ({ mem, loading, setLoading }) => {
   const { user } = useLogin()
@@ -42,6 +55,7 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
       setLoading(false)
     }
   }
+  console.log(mem);
   return (
     <div
       disabled={loading}
@@ -82,21 +96,33 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
 }
 
 const BuyMemberships = () => {
-  const { user } = useLogin()
-  const { hasMembership, checkMembershipStatus } = useMembershipContext()
-  const [loading, setLoading] = useState(false)
-  const userDesignation = getUserType(user.email)
+  const { user } = useLogin();
+  const { hasMembership } = useMembershipContext();
+  const [loading, setLoading] = useState(false);
+  const [memData, setMemData] = useState([]); // Store fetched data
+  const userDesignation = getUserType(user.email);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getMemData();
+      setMemData(data);
+    };
+    fetchData();
+  }, []);
+
   if (hasMembership) {
-    return <Navigate to="/tickets" />
+    return <Navigate to="/tickets" />;
   }
-  const colors = ['red', 'gray', 'amber', 'blue']
+
+  const colors = ["red", "gray", "amber", "blue"];
   const memberships = memData.map((mem, i) => ({
     name: mem.name,
     validitydate: Date.now() + mem.validity * 1000,
     availQR: mem.availQR,
-    price: mem.price.find((p) => p.type === userDesignation).price,
-    color: colors[i]
-  }))
+    price: mem.price.find((p) => p.type === userDesignation)?.price || 0, // Handle undefined case
+    color: colors[i % colors.length], // Prevent out-of-bounds error
+  }));
+
   return (
     <div className="flex flex-col items-center justify-center p-4 font-monts sm:p-8">
       <h2 className="text-center font-bn text-2xl font-bold sm:text-4xl">

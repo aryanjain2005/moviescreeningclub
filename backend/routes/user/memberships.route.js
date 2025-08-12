@@ -8,7 +8,8 @@ const {
   assignBaseMembership,
   getMembershipPrices,
   setMembershipPrice,
-  manualAdd
+  manualAdd,
+  createMembership
 } = require('@/controllers/user/memberships.controller')
 const { verifyJWTWithRole } = require('@/middleware')
 
@@ -16,8 +17,10 @@ router.post('/redirect', saveMembership)
 router.post('/request', verifyJWTWithRole('standard'), requestMembership)
 router.get('/check', verifyJWTWithRole('standard'), checkMembership)
 router.post('/assign-base-membership', verifyJWTWithRole('admin'), assignBaseMembership)
-router.get('/getprices', verifyJWTWithRole('standard'), getMembershipPrices)
-router.post('/getprices', verifyJWTWithRole('admin'), setMembershipPrice)
 router.post('/manual-add', verifyJWTWithRole('admin'), manualAdd)
+
+router.get('/prices', verifyJWTWithRole('standard'), getMembershipPrices)
+router.post('/prices', verifyJWTWithRole('admin'), setMembershipPrice)
+router.post('/create', verifyJWTWithRole('admin'), createMembership)
 // router.put('/suspend/:id', verifyJWTWithRole('standard'), suspendMembership)
 module.exports = router
