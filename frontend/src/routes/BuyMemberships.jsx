@@ -113,8 +113,9 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
           <li className="flex items-center gap-2">
             <Star />
             <p className="text-sm">
-              Food Voucher sponsored <br />
-              By Exodia!
+              Wood Fire Pizza
+              <br />
+              voucher worth ₹149.
             </p>
           </li>
         )}
