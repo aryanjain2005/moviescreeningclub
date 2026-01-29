@@ -7,7 +7,7 @@ const membershipSchema = new mongoose.Schema({
   },
   memtype: {
     type: String,
-    enum: ['base', 'silver', 'gold', 'diamond']
+    enum: ['base', 'silver', 'gold', 'diamond', 'filmFest']
   },
   isValid: {
     type: Boolean,
@@ -34,6 +34,20 @@ const membershipSchema = new mongoose.Schema({
   validitydate: {
     type: Date,
     default: () => new Date(Date.now() + this.validity * 1000)
+  },
+  // For Film Fest Pass: tracks which movies have been used
+  moviesUsed: {
+    type: [mongoose.Schema.Types.ObjectId], // Array of movie IDs (showtimes)
+    default: [],
+    required: function () {
+      return this.memtype === 'filmFest' || this.memtype === 'foodieFilmFest'
+    }
+  },
+  movieCount: {
+    type: Number, // Total number of movies allowed for Film Fest Pass
+    required: function () {
+      return this.memtype === 'filmFest' || this.memtype === 'foodieFilmFest'
+    }
   }
 })
 
