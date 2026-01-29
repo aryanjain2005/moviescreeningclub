@@ -11,32 +11,30 @@ const { decrypt, generateSignature } = require('@/utils/payment')
 
 const getMembershipPrices = async (req, res) => {
   try {
-    const membershipPrices = await MemPrice.find();
-    return res.status(200).json(membershipPrices);
+    const membershipPrices = await MemPrice.find()
+    return res.status(200).json(membershipPrices)
   } catch (error) {
-    console.error("Error fetching membership prices:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error('Error fetching membership prices:', error)
+    return res.status(500).json({ message: 'Internal server error' })
   }
-};
+}
 
-
-
-const setMembershiPrice = async (req, res) => {
+const setMembershipPrice = async (req, res) => {
   try {
-    const { name, price, validity, availQR } = req.body;
+    const { name, price, validity, availQR } = req.body
 
     const updatedMembership = await MemPrice.findOneAndUpdate(
       { name },
       { price, validity, availQR },
       { new: true, upsert: true }
-    );
+    )
 
-    return res.status(200).json(updatedMembership);
+    return res.status(200).json(updatedMembership)
   } catch (error) {
-    console.error("Error updating membership price:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error('Error updating membership price:', error)
+    return res.status(500).json({ message: 'Internal server error' })
   }
-};
+}
 
 const saveMembership = async (req, res) => {
   try {
@@ -72,7 +70,7 @@ const saveMembership = async (req, res) => {
         return res.redirect(`${process.env.FRONTEND_URL}/home`)
       }
     }
-    const memData = await MemPrice.find();
+    const memData = await MemPrice.find()
     const memDetails = memData.find((m) => m.name === memtype)
     const { validity, availQR } = memDetails
     const newusermem = new Membership({
@@ -98,23 +96,23 @@ const saveMembership = async (req, res) => {
 
 const manualAdd = async (req, res) => {
   try {
-    const { userEmail, txnId, membershipType, amount } = req.body;
-    
+    const { userEmail, txnId, membershipType, amount } = req.body
+
     if (!/^[a-f0-9]{32}$/i.test(txnId)) {
-      return res.status(400).json({ error: 'Invalid transaction ID' });
+      return res.status(400).json({ error: 'Invalid transaction ID' })
     }
 
-    const user = await User.findOne({ email: userEmail.toLowerCase() });
+    const user = await User.findOne({ email: userEmail.toLowerCase() })
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User not found' })
     }
-    const memData = await MemPrice.find();
-    const memDetails = memData.find((m) => m.name === membershipType);
+    const memData = await MemPrice.find()
+    const memDetails = memData.find((m) => m.name === membershipType)
     if (!memDetails) {
-      return res.status(400).json({ error: 'Invalid membership type' });
+      return res.status(400).json({ error: 'Invalid membership type' })
     }
 
-    const { validity, availQR } = memDetails;
+    const { validity, availQR } = memDetails
     const newMembership = new Membership({
       user: user._id,
       memtype: membershipType,
@@ -122,19 +120,20 @@ const manualAdd = async (req, res) => {
       validity,
       availQR,
       amount,
-      validitydate: new Date(Date.now() + validity * 1000),
-    });
-    
-    await newMembership.save();
-    await membershipMail(membershipType, userEmail.toLowerCase());
-    
-    res.status(201).json({ success: true, message: 'Membership added successfully' });
-  } catch (error) {
-    console.error('Error in manualAdd:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
+      validitydate: new Date(Date.now() + validity * 1000)
+    })
 
+    await newMembership.save()
+    await membershipMail(membershipType, userEmail.toLowerCase())
+
+    res
+      .status(201)
+      .json({ success: true, message: 'Membership added successfully' })
+  } catch (error) {
+    console.error('Error in manualAdd:', error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}
 
 const assignBaseMembership = async (req, res) => {
   try {
@@ -148,31 +147,34 @@ const assignBaseMembership = async (req, res) => {
 
     const { validity, availQR } = baseMembership
 
-    const newMemberships = coreTeamUsers.map(user => ({
+    const newMemberships = coreTeamUsers.map((user) => ({
       user: user._id,
       memtype: 'base',
       txnId: 'coreteam',
       validity,
       availQR,
       amount: getAmount('base', user.email),
-      validitydate: new Date(Date.now() + validity * 1000),
+      validitydate: new Date(Date.now() + validity * 1000)
     }))
 
     await Membership.insertMany(newMemberships)
 
-    return res.status(200).json({ message: 'Base membership assigned successfully to all core team users' })
+    return res
+      .status(200)
+      .json({
+        message: 'Base membership assigned successfully to all core team users'
+      })
   } catch (error) {
     console.error('Error assigning base membership:', error)
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
 
-
 const requestMembership = async (req, res) => {
   try {
     const { userId } = req.user
     const { memtype } = req.body
-    const memData = await MemPrice.find();
+    const memData = await MemPrice.find()
     if (!memtype || memData.map((m) => m.name).indexOf(memtype) === -1) {
       return res.status(400).json({ message: 'Membership type is required' })
     }
@@ -253,7 +255,8 @@ const checkMembership = async (req, res) => {
       memberships: allMemberships.map((m) => ({
         _id: m._id,
         memtype: m.memtype,
-        validitydate: m.validitydate,        availQR: m.availQR,
+        validitydate: m.validitydate,
+        availQR: m.availQR,
         isValid: m.isValid,
         purchasedate: m.purchasedate
       }))
@@ -296,12 +299,14 @@ const suspendMembership = async (req, res) => {
 
 const createMembership = async (req, res) => {
   try {
-    const { name, price, validity, availQR } = req.body;
+    const { name, price, validity, availQR } = req.body
 
     // Check if membership with this name already exists
-    const existingMembership = await MemPrice.findOne({ name });
+    const existingMembership = await MemPrice.findOne({ name })
     if (existingMembership) {
-      return res.status(400).json({ message: "Membership with this name already exists" });
+      return res
+        .status(400)
+        .json({ message: 'Membership with this name already exists' })
     }
 
     const newMembership = new MemPrice({
@@ -309,15 +314,15 @@ const createMembership = async (req, res) => {
       price,
       validity,
       availQR
-    });
+    })
 
-    const savedMembership = await newMembership.save();
-    return res.status(201).json(savedMembership);
+    const savedMembership = await newMembership.save()
+    return res.status(201).json(savedMembership)
   } catch (error) {
-    console.error("Error creating membership:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error('Error creating membership:', error)
+    return res.status(500).json({ message: 'Internal server error' })
   }
-};
+}
 
 module.exports = {
   saveMembership,
@@ -330,5 +335,4 @@ module.exports = {
 
   manualAdd,
   createMembership
-
 }
