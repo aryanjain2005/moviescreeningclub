@@ -105,7 +105,7 @@ const saveMembership = async (req, res) => {
       txnId,
       validity,
       availQR,
-      amount: getAmount(memtype, email),
+      amount: await getAmount(memtype, email),
       validitydate: new Date(Date.now() + validity * 1000)
     }
 
@@ -196,15 +196,17 @@ const assignBaseMembership = async (req, res) => {
 
     const { validity, availQR } = baseMembership
 
-    const newMemberships = coreTeamUsers.map((user) => ({
-      user: user._id,
-      memtype: 'base',
-      txnId: 'coreteam',
-      validity,
-      availQR,
-      amount: getAmount('base', user.email),
-      validitydate: new Date(Date.now() + validity * 1000)
-    }))
+    const newMemberships = await Promise.all(
+      coreTeamUsers.map(async (user) => ({
+        user: user._id,
+        memtype: 'base',
+        txnId: 'coreteam',
+        validity,
+        availQR,
+        amount: await getAmount('base', user.email),
+        validitydate: new Date(Date.now() + validity * 1000)
+      }))
+    )
 
     await Membership.insertMany(newMemberships)
 

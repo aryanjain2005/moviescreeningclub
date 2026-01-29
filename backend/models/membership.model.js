@@ -38,15 +38,28 @@ const membershipSchema = new mongoose.Schema({
   // For Film Fest Pass: tracks which movies have been used
   moviesUsed: {
     type: [mongoose.Schema.Types.ObjectId], // Array of movie IDs (showtimes)
-    default: [],
-    required: function () {
-      return this.memtype === 'filmFest' || this.memtype === 'foodieFilmFest'
+    default: undefined,
+    validate: {
+      validator: function (v) {
+        if (this.memtype === 'filmFest' || this.memtype === 'foodieFilmFest') {
+          return Array.isArray(v)
+        }
+        return true
+      },
+      message: 'moviesUsed must be an array for Film Fest memberships'
     }
   },
   movieCount: {
     type: Number, // Total number of movies allowed for Film Fest Pass
-    required: function () {
-      return this.memtype === 'filmFest' || this.memtype === 'foodieFilmFest'
+    validate: {
+      validator: function (v) {
+        if (this.memtype === 'filmFest' || this.memtype === 'foodieFilmFest') {
+          return v != null && v > 0
+        }
+        return true
+      },
+      message:
+        'movieCount is required and must be greater than 0 for Film Fest memberships'
     }
   }
 })
