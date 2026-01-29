@@ -148,7 +148,7 @@ const Navbar = () => {
 
                 <NavItem to="/addmembership" toggleMenu={toggleMenu}>
                   Add Manual Membership
-                </NavItem>            
+                </NavItem>
                 <NavItem to="/ticketprices" toggleMenu={toggleMenu}>
                   Ticket Prices
                 </NavItem>

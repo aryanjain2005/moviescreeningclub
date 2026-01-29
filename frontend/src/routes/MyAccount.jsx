@@ -30,6 +30,8 @@ const Myaccount = () => {
         return 'bg-gradient-to-tl from-gray-400 to-gray-300 dark:to-gray-900'
       case 'base':
         return 'bg-gradient-to-tl  from-red-400 to-red-300 dark:to-red-900'
+      case 'filmfest':
+        return 'bg-gradient-to-tl from-purple-400 to-purple-300 dark:to-purple-900'
       default:
         return 'bg-gradient-to-tl from-blue-400 to-blue-300 dark:to-blue-900'
     }
@@ -94,7 +96,15 @@ const Myaccount = () => {
                 )}
               </p>
               <p className="flex capitalize">
-                <strong>Passes Left : </strong> {currentMembership.availQR}
+                <strong>
+                  {currentMembership.memtype === 'filmFest'
+                    ? 'Movies Left : '
+                    : 'Passes Left : '}
+                </strong>
+                {currentMembership.memtype === 'filmFest'
+                  ? (currentMembership.movieCount || 0) -
+                    (currentMembership.moviesUsed || []).length
+                  : currentMembership.availQR}
               </p>
             </div>
           </div>

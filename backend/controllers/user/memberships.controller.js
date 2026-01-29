@@ -21,11 +21,21 @@ const getMembershipPrices = async (req, res) => {
 
 const setMembershipPrice = async (req, res) => {
   try {
-    const { name, price, validity, availQR } = req.body
+    const { name, price, validity, availQR, passType, movieCount } = req.body
+
+    const updateData = { price, validity, availQR }
+
+    // Add Film Fest Pass specific fields
+    if (passType) {
+      updateData.passType = passType
+    }
+    if (movieCount) {
+      updateData.movieCount = movieCount
+    }
 
     const updatedMembership = await MemPrice.findOneAndUpdate(
       { name },
-      { price, validity, availQR },
+      updateData,
       { new: true, upsert: true }
     )
 
@@ -62,9 +72,24 @@ const saveMembership = async (req, res) => {
       isValid: true
     })
     for (anyMem of anyMems) {
-      if (anyMem.availQR <= 0 || anyMem.validitydate < Date.now()) {
+      let shouldInvalidate = false
+
+      // Check if membership should be invalidated based on type
+      if (anyMem.validitydate < Date.now()) {
+        shouldInvalidate = true
+      } else if (anyMem.memtype === 'filmFest') {
+        const moviesUsed = anyMem.moviesUsed || []
+        const movieCount = anyMem.movieCount || 0
+        shouldInvalidate = moviesUsed.length >= movieCount
+      } else {
+        shouldInvalidate = anyMem.availQR <= 0
+      }
+
+      if (shouldInvalidate) {
         anyMem.isValid = false
-        anyMem.availQR = 0
+        if (anyMem.memtype !== 'filmFest') {
+          anyMem.availQR = 0
+        }
         await anyMem.save()
       } else {
         return res.redirect(`${process.env.FRONTEND_URL}/home`)
@@ -72,8 +97,9 @@ const saveMembership = async (req, res) => {
     }
     const memData = await MemPrice.find()
     const memDetails = memData.find((m) => m.name === memtype)
-    const { validity, availQR } = memDetails
-    const newusermem = new Membership({
+    const { validity, availQR, passType, movieCount } = memDetails
+
+    const membershipData = {
       user: userId,
       memtype,
       txnId,
@@ -81,7 +107,15 @@ const saveMembership = async (req, res) => {
       availQR,
       amount: getAmount(memtype, email),
       validitydate: new Date(Date.now() + validity * 1000)
-    })
+    }
+
+    // Add Film Fest Pass specific fields
+    if (passType === 'filmFest') {
+      membershipData.movieCount = movieCount
+      membershipData.moviesUsed = []
+    }
+
+    const newusermem = new Membership(membershipData)
     const savedusermem = await newusermem.save()
     console.log('Usermem details saved:', savedusermem)
     await membershipMail(memtype, email.toLowerCase())
@@ -98,10 +132,6 @@ const manualAdd = async (req, res) => {
   try {
     const { userEmail, txnId, membershipType, amount } = req.body
 
-    if (!/^[a-f0-9]{32}$/i.test(txnId)) {
-      return res.status(400).json({ error: 'Invalid transaction ID' })
-    }
-
     const user = await User.findOne({ email: userEmail.toLowerCase() })
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
@@ -112,16 +142,35 @@ const manualAdd = async (req, res) => {
       return res.status(400).json({ error: 'Invalid membership type' })
     }
 
-    const { validity, availQR } = memDetails
-    const newMembership = new Membership({
+    const { validity, availQR, passType, movieCount } = memDetails
+
+    // Map membership name to enum value
+    const memtypeMapping = {
+      base: 'base',
+      silver: 'silver',
+      gold: 'gold',
+      diamond: 'diamond',
+      'Film Fest': 'filmFest',
+      'Foodie Film Fest': 'filmFest'
+    }
+
+    const membershipData = {
       user: user._id,
-      memtype: membershipType,
+      memtype: memtypeMapping[membershipType] || membershipType.toLowerCase(),
       txnId,
       validity,
       availQR,
       amount,
       validitydate: new Date(Date.now() + validity * 1000)
-    })
+    }
+
+    // Add Film Fest Pass specific fields
+    if (passType === 'filmFest') {
+      membershipData.movieCount = movieCount
+      membershipData.moviesUsed = []
+    }
+
+    const newMembership = new Membership(membershipData)
 
     await newMembership.save()
     await membershipMail(membershipType, userEmail.toLowerCase())
@@ -159,11 +208,9 @@ const assignBaseMembership = async (req, res) => {
 
     await Membership.insertMany(newMemberships)
 
-    return res
-      .status(200)
-      .json({
-        message: 'Base membership assigned successfully to all core team users'
-      })
+    return res.status(200).json({
+      message: 'Base membership assigned successfully to all core team users'
+    })
   } catch (error) {
     console.error('Error assigning base membership:', error)
     return res.status(500).json({ message: 'Internal server error' })
@@ -188,13 +235,27 @@ const requestMembership = async (req, res) => {
       isValid: true
     })
     for (mem of userMemberships) {
-      if (mem.validitydate > Date.now() && mem.availQR > 0) {
+      let hasValidPasses = false
+
+      // Check if membership still has valid passes based on type
+      if (mem.memtype === 'filmFest') {
+        const moviesUsed = mem.moviesUsed || []
+        const movieCount = mem.movieCount || 0
+        hasValidPasses =
+          mem.validitydate > Date.now() && moviesUsed.length < movieCount
+      } else {
+        hasValidPasses = mem.validitydate > Date.now() && mem.availQR > 0
+      }
+
+      if (hasValidPasses) {
         return res
           .status(400)
           .json({ message: 'User already has a valid membership' })
       }
       mem.isValid = false
-      mem.availQR = 0
+      if (mem.memtype !== 'filmFest') {
+        mem.availQR = 0
+      }
       await mem.save()
     }
 
@@ -241,12 +302,27 @@ const checkMembership = async (req, res) => {
     const { userId } = req.user
     const allMemberships = await Membership.find({ user: userId })
 
-    const invalidMemberships = allMemberships.filter(
-      (m) => m.validitydate < Date.now() || m.availQR <= 0
-    )
+    // Invalidate memberships based on their type
+    const invalidMemberships = allMemberships.filter((m) => {
+      // Check validity date for all memberships
+      if (m.validitydate < Date.now()) return true
+
+      // For Film Fest Pass, check if all movies are used
+      if (m.memtype === 'filmFest') {
+        const moviesUsed = m.moviesUsed || []
+        const movieCount = m.movieCount || 0
+        return moviesUsed.length >= movieCount
+      }
+
+      // For standard passes, check availQR
+      return m.availQR <= 0
+    })
+
     for (m of invalidMemberships) {
       m.isValid = false
-      m.availQR = 0
+      if (m.memtype !== 'filmFest') {
+        m.availQR = 0
+      }
       await m.save()
     }
 
@@ -258,10 +334,13 @@ const checkMembership = async (req, res) => {
         validitydate: m.validitydate,
         availQR: m.availQR,
         isValid: m.isValid,
-        purchasedate: m.purchasedate
+        purchasedate: m.purchasedate,
+        movieCount: m.movieCount,
+        moviesUsed: m.moviesUsed
       }))
     })
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
@@ -271,16 +350,30 @@ const suspendMembership = async (req, res) => {
   const { id: membershipId } = req.params
   try {
     const userMemberships = await Membership.find({ user: userId })
-    const membershipSuspended = false
+    let membershipSuspended = false
 
     for (membership of userMemberships) {
+      let shouldSuspend = false
+
+      // Check if membership should be suspended
       if (
         membership.validitydate < Date.now() ||
-        membership.availQR <= 0 ||
-        membership._id === membershipId
+        membership._id.toString() === membershipId
       ) {
+        shouldSuspend = true
+      } else if (membership.memtype === 'filmFest') {
+        const moviesUsed = membership.moviesUsed || []
+        const movieCount = membership.movieCount || 0
+        shouldSuspend = moviesUsed.length >= movieCount
+      } else {
+        shouldSuspend = membership.availQR <= 0
+      }
+
+      if (shouldSuspend) {
         membership.isValid = false
-        membership.availQR = 0
+        if (membership.memtype !== 'filmFest') {
+          membership.availQR = 0
+        }
         await membership.save()
         membershipSuspended = true
       }
@@ -299,7 +392,7 @@ const suspendMembership = async (req, res) => {
 
 const createMembership = async (req, res) => {
   try {
-    const { name, price, validity, availQR } = req.body
+    const { name, price, validity, availQR, passType, movieCount } = req.body
 
     // Check if membership with this name already exists
     const existingMembership = await MemPrice.findOne({ name })
@@ -309,12 +402,22 @@ const createMembership = async (req, res) => {
         .json({ message: 'Membership with this name already exists' })
     }
 
-    const newMembership = new MemPrice({
+    const membershipData = {
       name,
       price,
       validity,
       availQR
-    })
+    }
+
+    // Add Film Fest Pass specific fields
+    if (passType) {
+      membershipData.passType = passType
+    }
+    if (movieCount) {
+      membershipData.movieCount = movieCount
+    }
+
+    const newMembership = new MemPrice(membershipData)
 
     const savedMembership = await newMembership.save()
     return res.status(201).json(savedMembership)
