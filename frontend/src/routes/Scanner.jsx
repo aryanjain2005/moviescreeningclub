@@ -233,7 +233,9 @@ export const Scanner = () => {
     if (!scanResultInfo.exists) return 'QR code not found'
     if (scanResultInfo.used) return 'QR code already used'
     if (scanResultInfo.validityPassed) return 'Validity of this QR has expired'
-    return `Ticket for ${scanResultInfo.name} (${scanResultInfo.email}) for ${scanResultInfo.movie} on ${new Date(scanResultInfo.show).toLocaleDateString('en-IN')} `
+    const membershipType =
+      scanResultInfo.membershipType === 'filmFest' ? ' [Film Fest Pass]' : ''
+    return `Ticket for ${scanResultInfo.name} (${scanResultInfo.email}) for ${scanResultInfo.movie} on ${new Date(scanResultInfo.show).toLocaleDateString('en-IN')}${membershipType}`
   }
 
   //print last scanned qr

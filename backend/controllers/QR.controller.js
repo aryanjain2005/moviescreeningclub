@@ -124,13 +124,29 @@ const cancelQr = async (req, res) => {
     }
     
     if (!movie.free) {
+      // Find membership - for Film Fest Pass, don't check availQR
       const hasMembership = await Membership.findOne({
         user: req.user.userId,
         isValid: true,
-        availQR: { $gt: 0 }
+        $or: [
+          { memtype: 'filmFest' }, // Film Fest Pass doesn't use availQR
+          { availQR: { $gt: 0 } } // Standard passes need availQR
+        ]
       }).session(session)
+
       if (hasMembership) {
-        hasMembership.availQR += 1
+        // If Film Fest Pass, remove the movie from moviesUsed
+        if (hasMembership.memtype === 'filmFest') {
+          // Backward compatibility: initialize moviesUsed if it doesn't exist
+          if (!hasMembership.moviesUsed) {
+            hasMembership.moviesUsed = []
+          }
+          hasMembership.moviesUsed = hasMembership.moviesUsed.filter(
+            (id) => id.toString() !== qr.showtime.toString()
+          )
+        } else {
+          hasMembership.availQR += 1
+        }
         hasMembership.validitydate = new Date(
           Date.now() + hasMembership.validity * 1000
         )

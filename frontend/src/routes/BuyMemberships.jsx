@@ -3,10 +3,23 @@ import { useLogin } from '@/components/LoginContext'
 import { useMembershipContext } from '@/components/MembershipContext'
 import { api } from '@/utils/api'
 import { getUserType } from '@/utils/user'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
-import memData from '../../../constants/memberships.json'
+
+const getMemData = async () => {
+  try {
+    const res = await api.get('/membership/prices')
+    if (res.status !== 200) {
+      console.error('Error fetching membership data:', res.data.error)
+      return []
+    }
+    return res.data
+  } catch (err) {
+    console.error('Error fetching membership data:', err)
+    return []
+  }
+}
 
 const MembershipCard = ({ mem, loading, setLoading }) => {
   const { user } = useLogin()
@@ -14,8 +27,11 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
     try {
       if (loading) return
       setLoading(true)
+      const memtype = mem.name.toLowerCase().includes('film fest')
+        ? 'filmFest'
+        : mem.name
       const res = await api.post('/membership/request', {
-        memtype: mem.name
+        memtype
       })
       setLoading(false)
       if (res.status !== 200) {
@@ -42,6 +58,7 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
       setLoading(false)
     }
   }
+  console.log(mem)
   return (
     <div
       disabled={loading}
@@ -56,8 +73,21 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
         <li className="flex items-center gap-2">
           <Star />
           <p>
-            <span className="mr-1 text-lg font-semibold">{mem.availQR}</span>{' '}
-            {mem.availQR > 1 ? 'Passes' : 'Pass'}
+            {mem.passType === 'filmFest' ? (
+              <>
+                <span className="mr-1 text-lg font-semibold">
+                  {mem.movieCount}
+                </span>{' '}
+                {mem.movieCount > 1 ? 'Movies' : 'Movie'}
+              </>
+            ) : (
+              <>
+                <span className="mr-1 text-lg font-semibold">
+                  {mem.availQR}
+                </span>{' '}
+                {mem.availQR > 1 ? 'Passes' : 'Pass'}
+              </>
+            )}
           </p>
         </li>
         <li className="flex items-center gap-2">
@@ -76,6 +106,22 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
             </span>
           </p>
         </li>
+        {mem.passType === 'filmFest' && (
+          <li className="flex items-center gap-2">
+            <Star />
+            <p className="text-sm">1 ticket per movie</p>
+          </li>
+        )}
+        {mem.name == 'Foodie Film Fest' && (
+          <li className="flex items-center gap-2">
+            <Star />
+            <p className="text-sm">
+              Wood Fire Pizza
+              <br />
+              voucher worth ₹149.
+            </p>
+          </li>
+        )}
       </ul>
     </div>
   )
@@ -83,20 +129,43 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
 
 const BuyMemberships = () => {
   const { user } = useLogin()
-  const { hasMembership, checkMembershipStatus } = useMembershipContext()
+  const { hasMembership } = useMembershipContext()
   const [loading, setLoading] = useState(false)
+  const [memData, setMemData] = useState([]) // Store fetched data
   const userDesignation = getUserType(user.email)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getMemData()
+      setMemData(data)
+    }
+    fetchData()
+  }, [])
+
   if (hasMembership) {
     return <Navigate to="/tickets" />
   }
-  const colors = ['red', 'gray', 'amber', 'blue']
+
+  const colors = [
+    'red',
+    'gray',
+    'amber',
+    'blue',
+    'green',
+    'purple',
+    'pink',
+    'indigo'
+  ]
   const memberships = memData.map((mem, i) => ({
     name: mem.name,
     validitydate: Date.now() + mem.validity * 1000,
     availQR: mem.availQR,
-    price: mem.price.find((p) => p.type === userDesignation).price,
-    color: colors[i]
+    price: mem.price.find((p) => p.type === userDesignation)?.price || 0,
+    color: colors[i % colors.length],
+    passType: mem.passType || 'standard', // Backward compatibility
+    movieCount: mem.movieCount || 0 // Backward compatibility
   }))
+
   return (
     <div className="flex flex-col items-center justify-center p-4 font-monts sm:p-8">
       <h2 className="text-center font-bn text-2xl font-bold sm:text-4xl">

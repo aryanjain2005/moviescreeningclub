@@ -128,9 +128,9 @@ const Navbar = () => {
                 Buy a new Membership
               </NavItem>
             )}
-            <NavItem to="/vote" toggleMenu={toggleMenu}>
+            {/* <NavItem to="/vote" toggleMenu={toggleMenu}>
               Vote Page
-            </NavItem>
+            </NavItem> */}
             {isAllowedLvl('admin', user?.usertype) && (
               <>
                 <NavItem to="/adddropvolunteer" toggleMenu={toggleMenu}>
@@ -144,6 +144,16 @@ const Navbar = () => {
                 </NavItem>
                 <NavItem to="/addbasetocore" toggleMenu={toggleMenu}>
                   Add Base to Core
+                </NavItem>
+
+                <NavItem to="/addmembership" toggleMenu={toggleMenu}>
+                  Add Manual Membership
+                </NavItem>
+                <NavItem to="/ticketprices" toggleMenu={toggleMenu}>
+                  Ticket Prices
+                </NavItem>
+                <NavItem to="/manageusers" toggleMenu={toggleMenu}>
+                  Manage Users
                 </NavItem>
               </>
             )}

@@ -108,9 +108,51 @@ const Movie = () => {
 
   const maxAllowed = movieFree
     ? freePasses
-    : (memberships?.find((membership) => membership.isValid)?.availQR ?? 0)
+    : (() => {
+        const activeMembership = memberships?.find(
+          (membership) => membership.isValid
+        )
+        if (!activeMembership) return 0
+
+        // For Film Fest Pass, only allow 1 seat at a time and limited by movie count
+        if (activeMembership.memtype === 'filmFest') {
+          const moviesUsedCount = activeMembership.moviesUsed?.length || 0
+          const canBuyMore = moviesUsedCount < activeMembership.movieCount
+          return canBuyMore ? 1 : 0
+        }
+
+        return activeMembership.availQR ?? 0
+      })()
   const bookSeats = async () => {
     try {
+      const activeMembership = memberships?.find(
+        (membership) => membership.isValid
+      )
+
+      // Film Fest Pass validation (with backward compatibility)
+      if (activeMembership?.memtype === 'filmFest') {
+        if (selectedSeats.length > 1) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Film Fest Pass: You can only buy 1 ticket at a time',
+            icon: 'error'
+          })
+          return
+        }
+
+        // Check if already booked (with safe navigation for backward compatibility)
+        const moviesUsed = activeMembership.moviesUsed || []
+        const alreadyBooked = moviesUsed.some((movieId) => movieId === showtime)
+        if (alreadyBooked) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Film Fest Pass: You have already booked a ticket for this movie',
+            icon: 'error'
+          })
+          return
+        }
+      }
+
       setLoading(true)
       const res = await api.put(`/seatmap/${showtime}`, {
         seats: selectedSeats
@@ -131,7 +173,7 @@ const Movie = () => {
     } catch (error) {
       Swal.fire({
         title: 'Error',
-        text: 'Error booking seats',
+        text: error.response?.data?.error || 'Error booking seats',
         icon: 'error'
       })
     }
@@ -238,9 +280,25 @@ const Movie = () => {
                 <span className="font-bold">
                   {movieFree
                     ? 'No. of Free Passes Left: '
-                    : 'No. of Paid Passes Left: '}
+                    : memberships?.find((membership) => membership.isValid)
+                          ?.memtype === 'filmFest'
+                      ? 'Film Fest Pass - Movies Left: '
+                      : 'No. of Paid Passes Left: '}
                 </span>
-                {maxAllowed}
+                {movieFree
+                  ? freePasses
+                  : (() => {
+                      const activeMembership = memberships?.find(
+                        (membership) => membership.isValid
+                      )
+                      if (activeMembership?.memtype === 'filmFest') {
+                        return (
+                          activeMembership.movieCount -
+                          (activeMembership.moviesUsed?.length || 0)
+                        )
+                      }
+                      return activeMembership?.availQR ?? 0
+                    })()}
               </p>
               <p className="mt-2 text-md">
                 <span className="font-bold">Number of seats left: </span>
@@ -313,7 +371,7 @@ const Movie = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-[#141414] rounded-xl p-2 sm:p-4 flex  w-full overflow-auto p-4">
+        <div className="bg-white dark:bg-[#141414] rounded-xl p-2 sm:p-4 flex w-full overflow-auto">
           {seats && (
             <Seats
               seats={seats}

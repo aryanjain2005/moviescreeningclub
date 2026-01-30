@@ -47,7 +47,7 @@ export default function Footer() {
                 />
               </svg>
 
-              <span>+91-9799000999</span>
+              <span>+91-9318328749</span>
             </div>
           </div>
           <div className="my-4 flex flex-col gap-1">

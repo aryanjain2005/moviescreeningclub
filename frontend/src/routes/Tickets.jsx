@@ -99,6 +99,11 @@ const Tickets = () => {
                     />
                     <div className="flex flex-col gap-1">
                       <p className="text-lg font-bold">{ticket.movie.title}</p>
+                      {ticket.membership?.memtype === 'filmFest' && (
+                        <span className="text-xs bg-purple-500 text-white px-2 py-1 rounded w-fit">
+                          Film Fest Pass
+                        </span>
+                      )}
                       <p>
                         {new Date(ticket.movie.showtime.date).toLocaleString(
                           'en-IN',

@@ -8,7 +8,9 @@ import { Loading } from '@/components/icons/Loading'
 import { LoginProvider } from '@/components/LoginContext'
 import { MembershipProvider } from '@/components/MembershipContext'
 import AuthenticatedRoute from '@/components/ProtectedRoute'
+import AddBaseMem from '@/routes/addBaseMem'
 import AddDropVolunteer from '@/routes/AddDropVolunteer'
+import AddManualMem from '@/routes/AddManualMem.jsx'
 import MovieForm from '@/routes/AddMovie'
 import AdminFood from '@/routes/AdminFoodCorner'
 import ForgotPassword from '@/routes/auth/ForgotPassword'
@@ -21,14 +23,15 @@ import FoodList from '@/routes/Food'
 import FoodVerify from '@/routes/FoodVerify'
 import Guidelines from '@/routes/Guidelines'
 import Home from '@/routes/Home'
+import ManageUsers from '@/routes/ManageUsers'
 import Metrics from '@/routes/Metrics'
 import ModifyMovie from '@/routes/ModifyMovie'
 import Movie from '@/routes/Movie'
 import MyAccount from '@/routes/MyAccount'
 import Showtime from '@/routes/Showtime'
+import TicketPrices from '@/routes/TicketPrices'
 import Tickets from '@/routes/Tickets'
 import MovieList from '@/routes/VotePage'
-import AddBaseMem from '@/routes/addBaseMem'
 
 const Scanner = lazy(() => import('@/routes/Scanner'))
 
@@ -189,11 +192,28 @@ function App() {
                 />
                 <Route path="/guidelines" element={<Guidelines />} />
                 <Route path="/metrics" element={<Metrics />} />
+                <Route path="/addbasetocore" element={<AddBaseMem />} />
                 <Route
-                  path="/addbasetocore"
+                  path="/ticketprices"
                   element={
                     <AuthenticatedRoute minLevel="admin">
-                      <AddBaseMem />
+                      <TicketPrices />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/addmembership"
+                  element={
+                    <AuthenticatedRoute minLevel="admin">
+                      <AddManualMem />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/manageusers"
+                  element={
+                    <AuthenticatedRoute minLevel="admin">
+                      <ManageUsers />
                     </AuthenticatedRoute>
                   }
                 />
