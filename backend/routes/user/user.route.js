@@ -8,7 +8,9 @@ const {
   getUserDetails,
   updateUserDetails,
   updateMembership,
-  updateQRCode
+  updateQRCode,
+  deleteMembership,
+  deleteQRCode
 } = require('@/controllers/user/user.controller')
 const { verifyJWTWithRole } = require('@/middleware')
 
@@ -21,7 +23,13 @@ router.put(
   verifyJWTWithRole('admin'),
   updateMembership
 )
+router.delete(
+  '/membership/:membershipId',
+  verifyJWTWithRole('admin'),
+  deleteMembership
+)
 router.put('/qr/:qrId', verifyJWTWithRole('admin'), updateQRCode)
+router.delete('/qr/:qrId', verifyJWTWithRole('admin'), deleteQRCode)
 router.get('/:email', verifyJWTWithRole(), userType)
 router.get('/membershipdata/:email', verifyJWTWithRole(), userMembershipData)
 module.exports = router
