@@ -39,23 +39,30 @@ const getQRs = async (req, res) => {
             used: qr.used
           })
         } else {
-          const movie = await Movie.findOne({ 'showtimes._id': qr.showtime })
-
+          if (!qr.expirationDate || isNaN(new Date(qr.expirationDate))) {
+            console.error("Invalid expirationDate for QR:", qr._id);
+            continue; // Skip this QR if it has no expiration date
+          }
+          
+          const movie = qr.showtime ? await Movie.findOne({ 'showtimes._id': qr.showtime }) : null;
+          const showtime = movie ? movie.showtimes.id(qr.showtime) : null;
+          
           resQr.unused.push({
             id: qr._id,
-            qrData: await QRCode.toDataURL(qr.code),
+            qrData: qr.code ? await QRCode.toDataURL(qr.code) : null, // Handle null qr.code
             expirationDate: qr.expirationDate,
             isValid: qr.isValid,
             registrationDate: qr.registrationDate,
             seat: qr.seat,
             used: qr.used,
-            movie: !!movie && {
+            movie: movie ? {
               title: movie.title,
               genre: movie.genre,
-              showtime: movie.showtimes.id(qr.showtime)
-            },
+              showtime: showtime
+            } : null,
             free: qr.free || false
-          })
+          });
+          
         }
       } else {
         qr.isValid = false
@@ -100,22 +107,22 @@ const cancelQr = async (req, res) => {
       await session.abortTransaction()
       return res.status(404).json({ error: 'QR not found' })
     }
-    const movie = await Movie.findOne({ 'showtimes._id': qr.showtime }).session(
-      session
-    )
+    const movie = qr?.showtime ? await Movie.findOne({ 'showtimes._id': qr.showtime }).session(session) : null;
     if (!movie) {
-      await session.abortTransaction()
-      return res.status(404).json({ error: 'Movie not found' })
+      await session.abortTransaction();
+      return res.status(404).json({ error: 'Movie not found' });
     }
+    
     const seatMap = await SeatMap.findOneAndUpdate(
       { showtimeId: qr.showtime },
       { $set: { [`seats.${qr.seat}`]: null } },
       { new: true, session }
-    )
+    );
     if (!seatMap) {
-      await session.abortTransaction()
-      throw new Error('Error cancelling QR')
+      await session.abortTransaction();
+      return res.status(500).json({ error: 'Error cancelling QR' });
     }
+    
     if (!movie.free) {
       // Find membership - for Film Fest Pass, don't check availQR
       const hasMembership = await Membership.findOne({
@@ -229,18 +236,20 @@ const check = async (req, res) => {
         used: true
       })
     }
-    const movie = await Movie.findOne({ 'showtimes._id': qr.showtime })
+    const movie = qr?.showtime ? await Movie.findOne({ 'showtimes._id': qr.showtime }) : null;
+    const showtime = movie ? movie.showtimes.id(qr.showtime) : null;
+    
     return res.json({
       exists: true,
       validityPassed: false,
       used: false,
       cancelled: false,
-      email: qr.user.email,
+      email: qr.user?.email || 'Unknown',
       seat: qr.seat,
-      name: qr.user.name,
-      show: movie.showtimes.id(qr.showtime).date,
-      movie: movie.title
-    })
+      name: qr.user?.name || 'Unknown',
+      show: showtime ? showtime.date : 'Unknown',
+      movie: movie?.title || 'Unknown'
+    });
   } catch (error) {
     console.error('Error:', error)
     res.status(500).json({ error: 'Internal server error' })
