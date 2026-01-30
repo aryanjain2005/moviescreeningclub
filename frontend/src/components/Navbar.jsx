@@ -128,9 +128,9 @@ const Navbar = () => {
                 Buy a new Membership
               </NavItem>
             )}
-            <NavItem to="/vote" toggleMenu={toggleMenu}>
+            {/* <NavItem to="/vote" toggleMenu={toggleMenu}>
               Vote Page
-            </NavItem>
+            </NavItem> */}
             {isAllowedLvl('admin', user?.usertype) && (
               <>
                 <NavItem to="/adddropvolunteer" toggleMenu={toggleMenu}>

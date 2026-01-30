@@ -239,6 +239,46 @@ const updateQRCode = async (req, res) => {
   }
 }
 
+const deleteMembership = async (req, res) => {
+  try {
+    const { membershipId } = req.params
+
+    const membership = await Membership.findByIdAndDelete(membershipId)
+    
+    if (!membership) {
+      return res.status(404).json({ error: 'Membership not found' })
+    }
+
+    res.status(200).json({
+      message: 'Membership deleted successfully',
+      deletedMembership: membership
+    })
+  } catch (error) {
+    console.error('Error deleting membership:', error)
+    res.status(500).json({ error: 'Error deleting membership' })
+  }
+}
+
+const deleteQRCode = async (req, res) => {
+  try {
+    const { qrId } = req.params
+
+    const qr = await QR.findByIdAndDelete(qrId)
+    
+    if (!qr) {
+      return res.status(404).json({ error: 'QR code not found' })
+    }
+
+    res.status(200).json({
+      message: 'QR code deleted successfully',
+      deletedQR: qr
+    })
+  } catch (error) {
+    console.error('Error deleting QR code:', error)
+    res.status(500).json({ error: 'Error deleting QR code' })
+  }
+}
+
 module.exports = {
   fetchUsers,
   updateUserType,
@@ -247,5 +287,7 @@ module.exports = {
   getUserDetails,
   updateUserDetails,
   updateMembership,
-  updateQRCode
+  updateQRCode,
+  deleteMembership,
+  deleteQRCode
 }

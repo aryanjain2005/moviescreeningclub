@@ -1,7 +1,19 @@
 import { api } from '@/utils/api'
 import { useEffect, useState } from 'react'
+import Swal from 'sweetalert2'
 
 const TicketPrices = () => {
+  const toast = (title, icon = 'success') => {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon,
+      title,
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    })
+  }
   const [prices, setPrices] = useState([])
   const [editing, setEditing] = useState(null)
   const [editedData, setEditedData] = useState({})
@@ -83,7 +95,7 @@ const TicketPrices = () => {
       })
     } catch (error) {
       console.error('Error creating membership:', error)
-      alert('Error creating membership. Please try again.')
+      toast('Error creating membership. Please try again.', 'error')
     }
   }
 
@@ -109,13 +121,13 @@ const TicketPrices = () => {
   }
 
   return (
-    <div className="w-full min-h-screen p-6 flex flex-col items-center font-monts">
+    <div className="w-full min-h-screen p-4 sm:p-6 flex flex-col items-center font-monts bg-gray-50 dark:bg-[#0f0f0f]">
       {/* Header Section */}
       <div className="w-full max-w-5xl mb-8 text-center">
-        <h1 className="text-4xl font-extrabold text-white-800 mb-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-gray-100 mb-2">
           Ticket Prices & Memberships
         </h1>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
           Manage your membership plans and pricing structure
         </p>
       </div>
@@ -124,7 +136,7 @@ const TicketPrices = () => {
       <div className="w-full max-w-5xl mb-6 flex justify-center">
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center gap-2"
+          className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg flex items-center justify-center gap-2"
         >
           <svg
             className="w-5 h-5"
@@ -145,7 +157,7 @@ const TicketPrices = () => {
 
       {/* Create Form Section */}
       {showCreateForm && (
-        <div className="w-full max-w-5xl mb-8 bg-gray-100 p-8 rounded-lg shadow-lg border">
+        <div className="w-full max-w-5xl mb-8 bg-gray-100 dark:bg-[#1a1a1a] p-6 sm:p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 mb-6">
             <svg
               className="w-6 h-6 text-green-600"
@@ -160,14 +172,14 @@ const TicketPrices = () => {
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
-            <h3 className="text-2xl font-bold text-gray-800">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
               Create New Membership
             </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
                 Membership Name
               </label>
               <input
@@ -177,11 +189,11 @@ const TicketPrices = () => {
                 onChange={(e) =>
                   setNewMembership({ ...newMembership, name: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
               />
             </div>
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
                 Validity (seconds)
               </label>
               <input
@@ -194,11 +206,11 @@ const TicketPrices = () => {
                     validity: e.target.value
                   })
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
               />
             </div>
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
                 Available QR
               </label>
               <input
@@ -211,14 +223,14 @@ const TicketPrices = () => {
                     availQR: e.target.value
                   })
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
                 Pass Type
               </label>
               <select
@@ -229,7 +241,7 @@ const TicketPrices = () => {
                     passType: e.target.value
                   })
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
               >
                 <option value="standard">Standard Pass</option>
                 <option value="filmFest">Film Fest Pass</option>
@@ -237,7 +249,7 @@ const TicketPrices = () => {
             </div>
             {newMembership.passType === 'filmFest' && (
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
+                <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
                   Movie Count
                 </label>
                 <input
@@ -250,9 +262,9 @@ const TicketPrices = () => {
                       movieCount: e.target.value
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Number of movies user can buy 1 ticket for each
                 </p>
               </div>
@@ -274,12 +286,12 @@ const TicketPrices = () => {
                   d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
                 />
               </svg>
-              <h4 className="text-lg font-semibold text-gray-800">
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Price Types
               </h4>
             </div>
             {newMembership.price.map((p, index) => (
-              <div key={index} className="flex gap-4 mb-4 items-center">
+              <div key={index} className="flex flex-col sm:flex-row gap-4 mb-4 items-center">
                 <input
                   type="text"
                   placeholder="Type (e.g., Standard, Student)"
@@ -287,7 +299,7 @@ const TicketPrices = () => {
                   onChange={(e) =>
                     updatePriceType(index, 'type', e.target.value)
                   }
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
                 />
                 <input
                   type="number"
@@ -296,7 +308,7 @@ const TicketPrices = () => {
                   onChange={(e) =>
                     updatePriceType(index, 'price', e.target.value)
                   }
-                  className="w-32 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full sm:w-32 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
                 />
                 {newMembership.price.length > 1 && (
                   <button
@@ -357,11 +369,11 @@ const TicketPrices = () => {
             {prices.map((membership) => (
               <div
                 key={membership.name}
-                className="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6"
+                className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6"
               >
                 {/* Membership Header */}
-                <div className="text-center mb-6 pb-4 border-b border-gray-200">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                <div className="text-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                     {membership.name}
                   </h3>
                   {membership.passType === 'filmFest' && (
@@ -369,7 +381,7 @@ const TicketPrices = () => {
                       Film Fest Pass - {membership.movieCount} Movies
                     </span>
                   )}
-                  <div className="flex justify-center gap-6 text-sm text-gray-600">
+                  <div className="flex justify-center gap-6 text-sm text-gray-600 dark:text-gray-400">
                     <span className="flex items-center gap-1">
                       <svg
                         className="w-4 h-4"
@@ -410,10 +422,10 @@ const TicketPrices = () => {
                   {membership.price.map((p) => (
                     <div
                       key={p.type}
-                      className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+                      className="bg-gray-50 dark:bg-[#141414] rounded-lg p-4 border border-gray-100 dark:border-gray-700"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-gray-700 font-medium">
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">
                           {p.type}
                         </span>
                         <span className="text-2xl font-bold text-green-600">
@@ -429,7 +441,7 @@ const TicketPrices = () => {
                               type="number"
                               value={editedData.price}
                               onChange={handleChange}
-                              className="w-20 px-3 py-1 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-green-500"
+                              className="w-20 px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
                             />
                             <button
                               onClick={handleSave}
@@ -471,7 +483,7 @@ const TicketPrices = () => {
         ) : (
           /* Empty State */
           <div className="text-center py-12">
-            <div className="bg-gray-100 border border-gray-200 rounded-lg p-12">
+            <div className="bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 rounded-lg p-8 sm:p-12">
               <svg
                 className="w-16 h-16 text-gray-400 mx-auto mb-4"
                 fill="none"
@@ -485,10 +497,10 @@ const TicketPrices = () => {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
                 No Memberships Found
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Create your first membership plan to get started
               </p>
               <button
