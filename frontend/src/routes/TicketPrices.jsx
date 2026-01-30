@@ -291,7 +291,10 @@ const TicketPrices = () => {
               </h4>
             </div>
             {newMembership.price.map((p, index) => (
-              <div key={index} className="flex flex-col sm:flex-row gap-4 mb-4 items-center">
+              <div
+                key={index}
+                className="flex flex-col sm:flex-row gap-4 mb-4 items-center"
+              >
                 <input
                   type="text"
                   placeholder="Type (e.g., Standard, Student)"

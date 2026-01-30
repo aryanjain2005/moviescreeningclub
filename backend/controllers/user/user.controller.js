@@ -244,7 +244,7 @@ const deleteMembership = async (req, res) => {
     const { membershipId } = req.params
 
     const membership = await Membership.findByIdAndDelete(membershipId)
-    
+
     if (!membership) {
       return res.status(404).json({ error: 'Membership not found' })
     }
@@ -264,7 +264,7 @@ const deleteQRCode = async (req, res) => {
     const { qrId } = req.params
 
     const qr = await QR.findByIdAndDelete(qrId)
-    
+
     if (!qr) {
       return res.status(404).json({ error: 'QR code not found' })
     }

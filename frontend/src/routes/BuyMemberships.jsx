@@ -27,8 +27,11 @@ const MembershipCard = ({ mem, loading, setLoading }) => {
     try {
       if (loading) return
       setLoading(true)
+      const memtype = mem.name.toLowerCase().includes('film fest')
+        ? 'filmFest'
+        : mem.name
       const res = await api.post('/membership/request', {
-        memtype: mem.name
+        memtype
       })
       setLoading(false)
       if (res.status !== 200) {

@@ -108,7 +108,10 @@ const ManageUsers = () => {
       await fetchAllUsers()
     } catch (error) {
       console.error('Error updating user:', error)
-      toast(error.response?.data?.error || 'Failed to update user details', 'error')
+      toast(
+        error.response?.data?.error || 'Failed to update user details',
+        'error'
+      )
     } finally {
       setLoading(false)
     }
@@ -404,86 +407,88 @@ const ManageUsers = () => {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      value={editForm.name}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, name: e.target.value })
-                      }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
-                      required
-                    />
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.name}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, name: e.target.value })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.phone}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, phone: e.target.value })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={editForm.newEmail}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, newEmail: e.target.value })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Designation
+                      </label>
+                      <select
+                        value={editForm.designation}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            designation: e.target.value
+                          })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
+                      >
+                        <option value="btech">B.Tech</option>
+                        <option value="mtech/phd">M.Tech/PhD</option>
+                        <option value="faculty/staff">Faculty/Staff</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        User Type
+                      </label>
+                      <select
+                        value={editForm.usertype}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, usertype: e.target.value })
+                        }
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
+                      >
+                        <option value="standard">Standard</option>
+                        <option value="ticketvolunteer">
+                          Ticket Volunteer
+                        </option>
+                        <option value="movievolunteer">Movie Volunteer</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Phone
-                    </label>
-                    <input
-                      type="text"
-                      value={editForm.phone}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, phone: e.target.value })
-                      }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={editForm.newEmail}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, newEmail: e.target.value })
-                      }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Designation
-                    </label>
-                    <select
-                      value={editForm.designation}
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          designation: e.target.value
-                        })
-                      }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
-                    >
-                      <option value="btech">B.Tech</option>
-                      <option value="mtech/phd">M.Tech/PhD</option>
-                      <option value="faculty/staff">Faculty/Staff</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      User Type
-                    </label>
-                    <select
-                      value={editForm.usertype}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, usertype: e.target.value })
-                      }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-[#141414] text-gray-900 dark:text-gray-100"
-                    >
-                      <option value="standard">Standard</option>
-                      <option value="ticketvolunteer">Ticket Volunteer</option>
-                      <option value="movievolunteer">Movie Volunteer</option>
-                      <option value="volunteer">Volunteer</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
                 </div>
                 <button
                   type="submit"
@@ -572,13 +577,17 @@ const ManageUsers = () => {
                   </p>
                 </div>
                 <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded-lg shadow-sm border border-transparent dark:border-gray-700">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Designation</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Designation
+                  </p>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 capitalize">
                     {userDetails.user.designation}
                   </p>
                 </div>
                 <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded-lg shadow-sm border border-transparent dark:border-gray-700">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">User Type</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    User Type
+                  </p>
                   <p className="font-semibold text-gray-800 dark:text-gray-100 capitalize">
                     {userDetails.user.usertype}
                   </p>
@@ -613,13 +622,17 @@ const ManageUsers = () => {
                     >
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Type</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Type
+                          </p>
                           <p className="font-medium capitalize">
                             {membership.memtype}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Amount</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Amount
+                          </p>
                           {editingMembership === membership._id ? (
                             <input
                               type="number"
@@ -637,10 +650,14 @@ const ManageUsers = () => {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Status
+                          </p>
                           {editingMembership === membership._id ? (
                             <select
-                              value={membershipForm.isValid ? 'Valid' : 'Expired'}
+                              value={
+                                membershipForm.isValid ? 'Valid' : 'Expired'
+                              }
                               onChange={(e) =>
                                 setMembershipForm({
                                   ...membershipForm,
@@ -665,7 +682,9 @@ const ManageUsers = () => {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Purchase Date</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Purchase Date
+                          </p>
                           <p className="font-medium text-sm">
                             {formatDate(membership.purchasedate)}
                           </p>
@@ -707,7 +726,9 @@ const ManageUsers = () => {
                         {editingMembership === membership._id ? (
                           <>
                             <button
-                              onClick={() => handleUpdateMembership(membership._id)}
+                              onClick={() =>
+                                handleUpdateMembership(membership._id)
+                              }
                               disabled={loading}
                               className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg text-sm disabled:opacity-50 flex items-center gap-2"
                             >
@@ -768,7 +789,9 @@ const ManageUsers = () => {
                               Edit
                             </button>
                             <button
-                              onClick={() => handleDeleteMembership(membership._id)}
+                              onClick={() =>
+                                handleDeleteMembership(membership._id)
+                              }
                               disabled={loading}
                               className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold shadow-md transition-all duration-200 hover:shadow-lg text-sm disabled:opacity-50 flex items-center gap-2"
                             >
@@ -794,7 +817,9 @@ const ManageUsers = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400">No memberships found</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No memberships found
+                </p>
               )}
             </div>
 
@@ -824,18 +849,24 @@ const ManageUsers = () => {
                       className="bg-gradient-to-r from-white to-gray-50 dark:from-[#1a1a1a] dark:to-[#1f1f1f] p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                     >
                       <div className="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">QR Code</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          QR Code
+                        </p>
                         <p className="font-mono text-xs break-all bg-gray-100 dark:bg-[#141414] p-2 rounded mt-1 text-gray-900 dark:text-gray-100">
                           {qr.code ? qr.code : 'N/A'}
                         </p>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-3">
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">QR ID</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            QR ID
+                          </p>
                           <p className="font-medium text-sm">{qr._id}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Seat</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Seat
+                          </p>
                           <p className="font-medium">{qr.seat || 'N/A'}</p>
                         </div>
                         <div>
@@ -847,7 +878,9 @@ const ManageUsers = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Used</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Used
+                          </p>
                           {editingQR === qr._id ? (
                             <label className="flex items-center gap-2">
                               <input
@@ -876,7 +909,9 @@ const ManageUsers = () => {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Valid</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Valid
+                          </p>
                           {editingQR === qr._id ? (
                             <label className="flex items-center gap-2">
                               <input
@@ -905,7 +940,9 @@ const ManageUsers = () => {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Free</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Free
+                          </p>
                           <p className="font-medium">
                             {qr.free ? 'Yes' : 'No'}
                           </p>
@@ -927,7 +964,9 @@ const ManageUsers = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Deleted</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Deleted
+                          </p>
                           {editingQR === qr._id ? (
                             <label className="flex items-center gap-2">
                               <input
@@ -1043,7 +1082,9 @@ const ManageUsers = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400">No QR codes found</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No QR codes found
+                </p>
               )}
             </div>
 
@@ -1061,21 +1102,29 @@ const ManageUsers = () => {
                     >
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Order ID</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Order ID
+                          </p>
                           <p className="font-medium text-sm">{order._id}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Total Amount</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Total Amount
+                          </p>
                           <p className="font-medium">₹{order.totalAmount}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Status
+                          </p>
                           <p className="font-medium capitalize">
                             {order.status}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Date</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Date
+                          </p>
                           <p className="font-medium text-sm">
                             {formatDate(order.createdAt)}
                           </p>
@@ -1083,7 +1132,9 @@ const ManageUsers = () => {
                       </div>
                       {order.items && order.items.length > 0 && (
                         <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Items:</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            Items:
+                          </p>
                           <div className="space-y-1">
                             {order.items.map((item, idx) => (
                               <p key={idx} className="text-sm">
@@ -1098,7 +1149,9 @@ const ManageUsers = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400">No food orders found</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  No food orders found
+                </p>
               )}
             </div>
           </div>
