@@ -152,6 +152,9 @@ const Navbar = () => {
                 <NavItem to="/ticketprices" toggleMenu={toggleMenu}>
                   Ticket Prices
                 </NavItem>
+                <NavItem to="/manageusers" toggleMenu={toggleMenu}>
+                  Manage Users
+                </NavItem>
               </>
             )}
             {isAllowedLvl('ticketvolunteer', user?.usertype) && (
