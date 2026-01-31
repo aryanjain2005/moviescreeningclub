@@ -77,8 +77,22 @@ function App() {
             {popcorns}
             <div className="relative z-10 w-full grow py-10">
               <Routes>
-                <Route index element={<Home />} />
-                <Route path="/home" element={<Home />} />
+                <Route
+                  index
+                  element={
+                    <AuthenticatedRoute>
+                      <Home />
+                    </AuthenticatedRoute>
+                  }
+                />
+                <Route
+                  path="/home"
+                  element={
+                    <AuthenticatedRoute>
+                      <Home />
+                    </AuthenticatedRoute>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/getOTP" element={<GetOTP />} />
