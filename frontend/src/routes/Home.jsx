@@ -1,4 +1,4 @@
-import MoieCard from '@/components/MovieCard'
+import MovieCard from '@/components/MovieCard'
 import { api } from '@/utils/api'
 import useDeviceSize from '@/utils/useDeviceSize'
 import { useEffect, useState } from 'react'
@@ -26,7 +26,7 @@ const GrpCard = ({ type, movies, shouldNav = true }) => {
       <div className="rounded-xl flex flex-col items-center gap-2 bg-white dark:bg-[#212121] p-4 sm:gap-6 sm:p-6">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {movies.slice(0, showMore ? movies.length : limit).map((movie, i) => (
-            <MoieCard movie={movie} key={i} navigate={shouldNav} />
+            <MovieCard movie={movie} key={i} navigate={shouldNav} />
           ))}
         </div>
         {movies.length > limit && (

@@ -25,6 +25,12 @@ const Movie = () => {
   const [freePasses, setFreePasses] = useState(0)
   const [movieFree, setMovieFree] = useState(false)
   const userDesignation = getUserType(user.email)
+  const isLocalAdmin = isAllowedLvl(
+    'movievolunteer',
+    user?.usertype || 'standard'
+  )
+  const [isBlockMode, setIsBlockMode] = useState(false)
+  const [customName, setCustomName] = useState('')
   const movieId = new URLSearchParams(location.search).get('movieId')
 
   const fetchSeats = async (showtimeId) => {
@@ -179,6 +185,44 @@ const Movie = () => {
     }
     setLoading(false)
   }
+
+  const handleBooking = async () => {
+    try {
+      if (isBlockMode) {
+        if (!customName.trim()) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Please provide a name for blocked tickets',
+            icon: 'error'
+          })
+          return
+        }
+        await api.post(`/seatmap/ticket/block/${showtime}`, {
+          seats: selectedSeats,
+          name: customName
+        })
+        Swal.fire({
+          title: 'Success',
+          text: 'Seats blocked and QR issued',
+          icon: 'success'
+        })
+        navigate('/tickets')
+      } else {
+        await api.put(`/seatmap/${showtime}`, {
+          seats: selectedSeats
+        })
+        checkMembershipStatus()
+        navigate('/tickets')
+      }
+    } catch (err) {
+      Swal.fire({
+        title: 'Error',
+        text: err.response?.data?.error || 'Error',
+        icon: 'error'
+      })
+    }
+  }
+
   const mailUsers = async (showtimeId) => {
     try {
       const res = await api.get(`/seatmap/mail/${showtimeId}`)
@@ -205,7 +249,7 @@ const Movie = () => {
   }
   const BottomBar = () =>
     selectedSeats.length > 0 &&
-    (hasMembership || movieFree) && (
+    (hasMembership || movieFree || isLocalAdmin) && (
       <div className="sticky bottom-0 z-[1200] flex w-full flex-col items-center justify-between gap-2 bg-white dark:bg-[#141414] p-2 drop-shadow-2xl sm:flex-row sm:pr-8">
         {!!selectedSeats.length && (
           <p className="text-xl font-bold">
@@ -215,6 +259,28 @@ const Movie = () => {
         <p className="text-xl">
           <span className="font-bold">Seats: </span> {selectedSeats.join(', ')}
         </p>
+        {isLocalAdmin && (
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isBlockMode}
+                onChange={() => setIsBlockMode(!isBlockMode)}
+                className="h-4 w-4 rounded border-gray-300 text-green-600"
+              />
+              Block Seat
+            </label>
+            {isBlockMode && (
+              <input
+                type="text"
+                placeholder="Enter name"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                className="rounded border border-gray-300 bg-white p-2 text-black"
+              />
+            )}
+          </div>
+        )}
         <button
           disabled={loading}
           onClick={() => {
@@ -235,13 +301,17 @@ const Movie = () => {
               showCancelButton: true
             }).then((result) => {
               if (result.isConfirmed) {
-                bookSeats()
+                if (isLocalAdmin) {
+                  handleBooking()
+                } else {
+                  bookSeats()
+                }
               }
             })
           }}
           className="rounded-md bg-green-600 p-2 text-xl text-white"
         >
-          {loading ? 'Booking...' : 'Book'}
+          {loading ? 'Booking...' : 'Confirm Booking'}
         </button>
       </div>
     )

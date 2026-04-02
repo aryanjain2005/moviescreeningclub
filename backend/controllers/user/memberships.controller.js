@@ -118,7 +118,11 @@ const saveMembership = async (req, res) => {
     const newusermem = new Membership(membershipData)
     const savedusermem = await newusermem.save()
     console.log('Usermem details saved:', savedusermem)
-    await membershipMail(memtype, email.toLowerCase())
+    try {
+      await membershipMail(memtype, email.toLowerCase())
+    } catch (mailError) {
+      console.error('Membership payment saved, email failed:', mailError)
+    }
     return res.redirect(`${process.env.FRONTEND_URL}/home?success_payment=true`)
   } catch (error) {
     console.error('Error saving Usermem:', error)
@@ -130,7 +134,7 @@ const saveMembership = async (req, res) => {
 
 const manualAdd = async (req, res) => {
   try {
-    const { userEmail, txnId, membershipType, amount } = req.body
+    const { userEmail, txnId, membershipType, amount, passes } = req.body
 
     const user = await User.findOne({ email: userEmail.toLowerCase() })
     if (!user) {
@@ -144,6 +148,16 @@ const manualAdd = async (req, res) => {
 
     const { validity, availQR, passType, movieCount } = memDetails
 
+    const parsedPasses =
+      passes !== undefined && passes !== '' && !Number.isNaN(Number(passes))
+        ? Number(passes)
+        : availQR
+
+    const parsedAmount = Number(amount)
+    if (Number.isNaN(parsedAmount)) {
+      return res.status(400).json({ error: 'Invalid amount' })
+    }
+
     // Map membership name to enum value
     const memtypeMapping = {
       base: 'base',
@@ -154,26 +168,34 @@ const manualAdd = async (req, res) => {
       'Foodie Film Fest': 'filmFest'
     }
 
+    const memtype =
+      memtypeMapping[membershipType] ||
+      membershipType.toLowerCase().replace(/\s+/g, '')
+
     const membershipData = {
       user: user._id,
-      memtype: memtypeMapping[membershipType] || membershipType.toLowerCase(),
+      memtype,
       txnId,
       validity,
-      availQR,
-      amount,
+      availQR: parsedPasses,
+      amount: parsedAmount,
       validitydate: new Date(Date.now() + validity * 1000)
     }
 
     // Add Film Fest Pass specific fields
     if (passType === 'filmFest') {
-      membershipData.movieCount = movieCount
+      membershipData.movieCount = parsedPasses
       membershipData.moviesUsed = []
     }
 
     const newMembership = new Membership(membershipData)
 
     await newMembership.save()
-    await membershipMail(membershipType, userEmail.toLowerCase())
+    try {
+      await membershipMail(membershipType, userEmail.toLowerCase())
+    } catch (mailError) {
+      console.error('Membership saved, email failed:', mailError)
+    }
 
     res
       .status(201)

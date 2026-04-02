@@ -13,6 +13,8 @@ const Showtime = () => {
   const [movie, setMovie] = useState({ showtimes: [], poster: '', trailer: '' })
   const [newShowtime, setNewShowtime] = useState({ date: '', time: '' })
   const [showAddRow, setShowAddRow] = useState(false)
+  const [isBlockMode, setIsBlockMode] = useState(false)
+  const [customName, setCustomName] = useState('')
   const movieId = new URLSearchParams(location.search).get('movieId')
   const isLocalAdmin = isAllowedLvl(
     'movievolunteer',

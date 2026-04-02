@@ -42,11 +42,12 @@ const MovieForm = () => {
           description: '',
           releaseDate: '',
           genre: '',
+          free: false,
           currentscreening: true // Reset to default value
         })
+        navigate('/home')
       })
       .catch((err) => console.error(err))
-    navigate('/home')
   }
 
   return (
